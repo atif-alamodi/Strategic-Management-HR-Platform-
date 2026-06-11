@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>منصة الإدارة الاستراتيجية للموارد البشرية</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--sw:248px;--bg:#0f1117;--bg2:#161b26;--bg3:#1e2535;--bg4:#242d40;--brd:#2a3347;--tx:#e8ecf4;--tx2:#8b97b0;--tx3:#5a6478;--ac:#4f7ef8;--ac2:#3d63d4;--gr:#22c778;--am:#f5a623;--rd:#f04e4e;--pu:#a78bfa;--tl:#2dd4bf;--pk:#f472b6}
+html[lang=ar]{font-family:'Cairo',sans-serif}
+html[lang=en]{font-family:'Inter',sans-serif}
+body{background:var(--bg);color:var(--tx);display:flex;height:100vh;overflow:hidden;font-size:14px}
+#sb{width:var(--sw);background:var(--bg2);display:flex;flex-direction:column;flex-shrink:0;transition:width .25s;border-inline-end:1px solid var(--brd);overflow:hidden}
+#sb.closed{width:0}
+.sb-inner{width:var(--sw);display:flex;flex-direction:column;height:100%;overflow-y:auto}
+.brand{padding:14px 12px 10px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--brd);flex-shrink:0}
+.brand-ic{width:30px;height:30px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0}
+.brand-tx{font-size:12px;font-weight:700;line-height:1.3}
+.brand-sub{font-size:10px;color:var(--tx2)}
+.lr{display:flex;gap:3px;padding:8px 10px 5px;flex-shrink:0}
+.lb{flex:1;padding:5px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--brd);background:var(--bg3);color:var(--tx2);border-radius:5px;transition:all .15s;font-family:inherit}
+.lb.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ng{padding:8px 7px 3px}
+.ng-l{font-size:9.5px;font-weight:700;color:var(--tx3);padding:0 7px 4px;letter-spacing:.4px}
+.ni{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:5px;cursor:pointer;color:var(--tx2);font-size:12px;transition:all .15s;white-space:nowrap}
+.ni:hover{background:var(--bg3);color:var(--tx)}
+.ni.on{background:var(--bg4);color:var(--ac)}
+.ni i{font-size:14px;flex-shrink:0}
+.ai-badge{font-size:9px;background:rgba(79,126,248,.2);color:var(--ac);border-radius:3px;padding:1px 4px;margin-inline-start:auto;font-weight:700;flex-shrink:0}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#tb{padding:10px 16px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);gap:8px;flex-shrink:0}
+.tb-l{display:flex;align-items:center;gap:8px}
+#tog{background:var(--bg3);border:1px solid var(--brd);border-radius:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2);transition:all .15s;flex-shrink:0}
+#tog:hover{background:var(--bg4);color:var(--tx)}
+#pg-t{font-size:14px;font-weight:700}
+.tb-r{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.bdg{background:var(--bg3);border:1px solid var(--brd);border-radius:20px;padding:3px 9px;font-size:10px;color:var(--tx2)}
+.aib{background:var(--ac);color:#fff;border:none;border-radius:5px;padding:5px 11px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit}
+.aib:hover{background:var(--ac2)}
+#ct{flex:1;overflow-y:auto;padding:18px}
+
+/* LAYOUT */
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.ph-ic{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ph h2{font-size:15px;font-weight:700}
+.ph p{font-size:11px;color:var(--tx2)}
+.wlc{background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:18px;margin-bottom:16px}
+.wlc h2{font-size:17px;font-weight:700;margin-bottom:3px}
+.wlc p{color:var(--tx2);font-size:12px}
+.mtr{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.mc{background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:12px}
+.mc-l{font-size:10px;color:var(--tx3);margin-bottom:5px}
+.mc-v{font-size:19px;font-weight:700}
+.mc-s{font-size:10px;color:var(--tx2);margin-top:2px}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.mcd{background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:12px;cursor:pointer;transition:all .2s}
+.mcd:hover{border-color:var(--ac);background:var(--bg3)}
+.mcd-i{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:7px;font-size:16px}
+.mcd h4{font-size:12px;font-weight:700;margin-bottom:2px}
+.mcd p{font-size:10px;color:var(--tx2);line-height:1.5}
+.tg{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:12px}
+.tg.one{grid-template-columns:1fr}
+.tc{background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:13px}
+.tc h4{font-size:12px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.tc p{font-size:11px;color:var(--tx2);margin-bottom:9px;line-height:1.5}
+.btn{background:var(--bg3);border:1px solid var(--brd);border-radius:5px;padding:5px 11px;font-size:11px;color:var(--tx);cursor:pointer;transition:all .15s;font-family:inherit}
+.btn:hover{background:var(--bg4);border-color:var(--ac);color:var(--ac)}
+.btn.pr{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn.pr:hover{background:var(--ac2)}
+.fl{margin-bottom:10px}
+.fl label{font-size:11px;color:var(--tx2);margin-bottom:4px;display:block}
+.fi,.fs,.fta{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:5px;padding:7px 9px;color:var(--tx);font-size:12px;outline:none;font-family:inherit}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--ac)}
+.fs option{background:var(--bg3)}
+.fta{resize:vertical;min-height:70px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tabs{display:flex;gap:3px;margin-bottom:12px;background:var(--bg2);border:1px solid var(--brd);border-radius:7px;padding:3px;flex-wrap:wrap}
+.tab{padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;color:var(--tx2);transition:all .15s;font-family:inherit;white-space:nowrap}
+.tab.on{background:var(--bg4);color:var(--tx)}
+.out{margin-top:10px;background:var(--bg3);border-radius:7px;padding:11px;font-size:12px;line-height:1.8;color:var(--tx2);display:none}
+.thk{color:var(--tx3);font-size:11px;font-style:italic}
+
+/* ADVISOR CHAT */
+.adv-wrap{display:flex;flex-direction:column;height:calc(100vh - 140px);gap:10px}
+.adv-header{background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:13px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.adv-ic{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.adv-name{font-size:13px;font-weight:700}
+.adv-desc{font-size:11px;color:var(--tx2);margin-top:2px}
+.adv-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.adv-tag{font-size:10px;background:var(--bg3);border:1px solid var(--brd);border-radius:4px;padding:2px 7px;color:var(--tx2)}
+.chat-a{flex:1;background:var(--bg2);border:1px solid var(--brd);border-radius:9px;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.msg{max-width:90%;padding:9px 12px;border-radius:9px;font-size:12px;line-height:1.7}
+.msg.u{background:var(--ac);color:#fff;align-self:flex-start;border-radius:9px 9px 9px 2px}
+.msg.a{background:var(--bg3);align-self:flex-end;border-radius:9px 9px 2px 9px}
+html[dir=ltr] .msg.u{align-self:flex-end;border-radius:9px 9px 2px 9px}
+html[dir=ltr] .msg.a{align-self:flex-start;border-radius:9px 9px 9px 2px}
+.msg .ml{font-size:9px;color:var(--tx3);margin-bottom:3px;font-weight:700}
+.cin{display:flex;gap:7px;flex-shrink:0}
+.cin input{flex:1;background:var(--bg2);border:1px solid var(--brd);border-radius:7px;padding:8px 11px;color:var(--tx);font-size:12px;outline:none;font-family:inherit}
+.cin input:focus{border-color:var(--ac)}
+.cin button{background:var(--ac);border:none;border-radius:7px;padding:8px 13px;color:#fff;cursor:pointer}
+.qsugg{display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0}
+.qs{background:var(--bg2);border:1px solid var(--brd);border-radius:6px;padding:5px 9px;font-size:11px;color:var(--tx2);cursor:pointer;transition:all .15s;font-family:inherit}
+.qs:hover{border-color:var(--ac);color:var(--ac)}
+
+/* OTHER */
+.sct{width:100%;border-collapse:collapse;font-size:11px}
+.sct th{text-align:inherit;padding:7px 9px;background:var(--bg3);color:var(--tx3);font-weight:600;border-bottom:1px solid var(--brd)}
+.sct td{padding:7px 9px;border-bottom:1px solid var(--brd);color:var(--tx)}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-inline-end:4px}
+.dg{background:var(--gr)}.da{background:var(--am)}.dr{background:var(--rd)}
+.prb{background:var(--bg3);border-radius:3px;height:5px;margin-top:5px}
+.prf{height:5px;border-radius:3px;background:var(--ac)}
+.dl{list-style:none}
+.dl li{font-size:11px;color:var(--tx2);padding:3px 0;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:5px}
+.dl li i{font-size:11px;color:var(--ac)}
+.nb{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:9px}
+.nbc{background:var(--bg3);border:1px solid var(--brd);border-radius:5px;padding:9px;min-height:82px;cursor:pointer;transition:all .15s}
+.nbc:hover{border-color:var(--ac)}
+.nbc-t{font-size:9px;color:var(--tx3);margin-bottom:4px}
+.nbc-l{font-size:10px;font-weight:700;color:var(--ac);margin-top:4px}
+.org-b{background:var(--bg3);border:1px solid var(--brd);border-radius:7px;padding:8px 11px;text-align:center;font-size:11px}
+.org-ln{width:2px;height:16px;background:var(--brd);margin:0 auto}
+.org-rw{display:flex;gap:5px;justify-content:center}
+.org-rw .org-b{flex:1;max-width:120px;font-size:10px}
+.stg-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.stg{flex:1;min-width:80px;background:var(--bg3);border-radius:7px;padding:8px;text-align:center;font-size:10px}
+.stg-ico{font-size:16px;margin-bottom:2px}
+.stg h5{font-weight:700;font-size:11px}
+.stg p{color:var(--tx3);font-size:10px;margin-top:1px}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.cc{background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:13px}
+.cb{font-size:20px;font-weight:900;margin-bottom:6px}
+.cb-b{color:var(--ac)}.cb-g{color:var(--gr)}.cb-a{color:var(--am)}
+.cc h4{font-size:12px;font-weight:700;margin-bottom:4px}
+.cc p{font-size:10px;color:var(--tx2);line-height:1.5;margin-bottom:7px}
+.band-out{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+.bc{background:var(--bg4);border-radius:5px;padding:9px;text-align:center}
+.bc .bl{font-size:9px;color:var(--tx3)}
+.bc .bv{font-size:14px;font-weight:700;color:var(--tx)}
+.bc .bv.m{color:var(--ac)}
+.ic-b{background:rgba(79,126,248,.15);color:var(--ac)}
+.ic-g{background:rgba(34,199,120,.15);color:var(--gr)}
+.ic-a{background:rgba(245,166,35,.15);color:var(--am)}
+.ic-p{background:rgba(167,139,250,.15);color:var(--pu)}
+.ic-t{background:rgba(45,212,191,.15);color:var(--tl)}
+.ic-r{background:rgba(240,78,78,.15);color:var(--rd)}
+.ic-pk{background:rgba(244,114,182,.15);color:var(--pk)}
+
+/* AI TOOLS GRID */
+.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.ai-card{background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:13px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:6px}
+.ai-card:hover{border-color:var(--ac);background:var(--bg3)}
+.ai-card-top{display:flex;align-items:center;gap:9px}
+.ai-card-ic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ai-card h4{font-size:12px;font-weight:700}
+.ai-card p{font-size:10px;color:var(--tx2);line-height:1.5}
+.ai-card .atag{font-size:9px;background:rgba(79,126,248,.15);color:var(--ac);border-radius:3px;padding:1px 5px;font-weight:700;display:inline-block}
+</style>
+</head>
+<body>
+<div id="sb"><div class="sb-inner">
+  <div class="brand">
+    <div class="brand-ic"><i class="ti ti-building-community"></i></div>
+    <div>      <div class="brand-tx" id="brtx">منصة الإدارة الاستراتيجية للموارد البشرية</div><div class="brand-sub" id="brsub">بوابة الموارد البشرية الاستراتيجية</div></div>
+  </div>
+  <div class="lr">
+    <button class="lb on" id="btn-ar" onclick="setLang('ar')">العربية</button>
+    <button class="lb" id="btn-en" onclick="setLang('en')">English</button>
+  </div>
+  <div id="nav"></div>
+</div></div>
+
+<div id="main">
+  <div id="tb">
+    <div class="tb-l">
+      <div id="tog" onclick="toggleSB()"><i class="ti ti-menu-2"></i></div>
+      <div id="pg-t">لوحة التحكم</div>
+    </div>
+    <div class="tb-r">
+      <span class="bdg"><i class="ti ti-map-pin"></i> <span id="loc-l">جدة، المملكة العربية السعودية</span></span>
+      <button class="aib" onclick="goPage('ai_hub')"><i class="ti ti-robot"></i> <span id="ai-bl">مركز الذكاء الاصطناعي</span></button>
+    </div>
+  </div>
+  <div id="ct"></div>
+</div>
+
+<script>
+const API="https://api.anthropic.com/v1/messages";
+let lang='ar',page='dashboard',sbOpen=true,chatHistories={};
+
+/* ===================== DATA ===================== */
+const ADVISORS={
+  ai_tools:{
+    key:'ai_tools',
+    icon:'ti-cpu',cls:'ic-b',
+    ar:{name:'مستشار أدوات الذكاء الاصطناعي في الموارد البشرية',desc:'استكشف واختر أفضل أدوات الذكاء الاصطناعي لتحسين وظائف الموارد البشرية',
+      tags:['ChatGPT للموارد البشرية','أتمتة','تحليل البيانات','اختيار الأدوات'],
+      sys:'أنت مستشار متخصص في أدوات الذكاء الاصطناعي للموارد البشرية. تساعد متخصصي الموارد البشرية على اختيار أفضل أدوات الذكاء الاصطناعي (مثل ChatGPT، Copilot، Workday AI، وغيرها) لتحسين عمليات التوظيف والأداء والتدريب والتحليلات. كن عملياً ومحدداً.',
+      sugg:['ما أفضل أدوات الذكاء الاصطناعي للتوظيف؟','كيف أستخدم ChatGPT في الموارد البشرية؟','أدوات الذكاء الاصطناعي لتقييم الأداء','كيف أتمتة مراجعة السير الذاتية؟']
+    },
+    en:{name:'HR AI Tools Advisor',desc:'Explore and select the best AI tools to enhance HR functions',
+      tags:['ChatGPT for HR','Automation','Data Analysis','Tool Selection'],
+      sys:'You are an expert advisor on AI tools for HR. Help HR professionals select and apply the best AI tools (ChatGPT, Copilot, Workday AI, etc.) for recruitment, performance, training, and analytics. Be practical and specific.',
+      sugg:['Best AI tools for recruitment?','How to use ChatGPT in HR?','AI for performance reviews','Automate CV screening with AI']
+    }
+  },
+  hr_audit:{
+    key:'hr_audit',icon:'ti-clipboard-check',cls:'ic-a',
+    ar:{name:'مستشار التدقيق والجاهزية في الموارد البشرية',desc:'تقييم جاهزية وظيفة الموارد البشرية للتدقيق والامتثال',
+      tags:['تدقيق الموارد البشرية','الامتثال','الفجوات','الجاهزية التنظيمية'],
+      sys:'أنت خبير تدقيق الموارد البشرية. تساعد المنظمات على تقييم جاهزية وظيفة الموارد البشرية للتدقيق: السياسات، الإجراءات، سجلات الموظفين، الامتثال للوائح (نظام العمل السعودي، GDPR، إلخ). اطرح أسئلة تشخيصية وقدم قوائم التحقق وخطط تصحيح الفجوات.',
+      sugg:['كيف أجري تدقيق شامل للموارد البشرية؟','قائمة تحقق لتدقيق الامتثال','ما الوثائق المطلوبة لتدقيق الموارد البشرية؟','كيف أقيّم فجوات السياسات؟']
+    },
+    en:{name:'HR Audit Readiness Advisor',desc:'Assess HR function readiness for audits and compliance',
+      tags:['HR Audit','Compliance','Gap Analysis','Org Readiness'],
+      sys:'You are an HR audit expert. Help organizations assess their HR function readiness: policies, procedures, employee records, regulatory compliance (Saudi Labor Law, GDPR, etc.). Ask diagnostic questions, provide checklists and gap remediation plans.',
+      sugg:['How to conduct a full HR audit?','Compliance audit checklist','Documents needed for HR audit?','How to assess policy gaps?']
+    }
+  },
+  automation:{
+    key:'automation',icon:'ti-settings-automation',cls:'ic-t',
+    ar:{name:'مُنشئ أتمتة الموارد البشرية',desc:'صمّم وابنِ حلول أتمتة لعمليات الموارد البشرية',
+      tags:['أتمتة العمليات','RPA','سير العمل','التكامل'],
+      sys:'أنت خبير أتمتة الموارد البشرية. تساعد المنظمات على تصميم وتنفيذ أتمتة عمليات الموارد البشرية: الإلحاق الوظيفي، إدارة الإجازات، كشوف الرواتب، التقارير، وإدارة الأداء. قدم خطوات عملية وأدوات (Zapier، Power Automate، إلخ) وعائد الاستثمار.',
+      sugg:['كيف أؤتمت عملية الإلحاق الوظيفي؟','أتمتة إدارة الإجازات','أفضل أدوات أتمتة الموارد البشرية','كيف أحسب عائد الاستثمار في الأتمتة؟']
+    },
+    en:{name:'HR Automation Builder',desc:'Design and build automation solutions for HR processes',
+      tags:['Process Automation','RPA','Workflows','Integration'],
+      sys:'You are an HR automation expert. Help organizations design and implement HR process automation: onboarding, leave management, payroll, reporting, and performance management. Provide practical steps, tools (Zapier, Power Automate, etc.) and ROI calculations.',
+      sugg:['How to automate onboarding?','Automate leave management','Best HR automation tools','Calculate automation ROI']
+    }
+  },
+  change_mgmt:{
+    key:'change_mgmt',icon:'ti-refresh',cls:'ic-p',
+    ar:{name:'مستشار إدارة التغيير',desc:'قيادة مبادرات التغيير التنظيمي بفاعلية',
+      tags:['إدارة التغيير','ADKAR','Kotter','مقاومة التغيير'],
+      sys:'أنت خبير إدارة التغيير متخصص في الموارد البشرية والتطوير التنظيمي. تساعد على تخطيط وتنفيذ مبادرات التغيير باستخدام نماذج ADKAR وKotter وLewin. تعالج مقاومة التغيير وتبني خطط التواصل وتقيّم جاهزية التغيير.',
+      sugg:['كيف أبني خطة إدارة التغيير؟','كيف أتعامل مع مقاومة التغيير؟','تطبيق نموذج ADKAR عملياً','كيف أقيّم جاهزية المنظمة للتغيير؟']
+    },
+    en:{name:'HR Change Management Advisor',desc:'Lead organizational change initiatives effectively',
+      tags:['Change Management','ADKAR','Kotter','Change Resistance'],
+      sys:'You are a change management expert specializing in HR and OD. Help plan and implement change initiatives using ADKAR, Kotter, and Lewin models. Address change resistance, build communication plans, and assess change readiness.',
+      sugg:['How to build a change management plan?','Dealing with change resistance?','Apply ADKAR model practically','Assess organizational change readiness']
+    }
+  },
+  comp_ben:{
+    key:'comp_ben',icon:'ti-coin',cls:'ic-g',
+    ar:{name:'مستشار التعويضات والمزايا',desc:'تصميم هياكل تعويضات تنافسية وعادلة',
+      tags:['نطاقات الرواتب','المكافآت الإجمالية','العدالة في الأجور','المعايرة'],
+      sys:'أنت خبير التعويضات والمزايا. تساعد المنظمات على تصميم هياكل تعويضات تنافسية وعادلة: تحليل السوق، نطاقات الرواتب، هياكل الدرجات، المكافآت الإجمالية، العدالة في الأجور، والحوافز. تعطي توصيات محددة مبنية على بيانات السوق.',
+      sugg:['كيف أصمم هيكل نطاقات الرواتب؟','ما هي مكونات المكافآت الإجمالية؟','كيف أجري مراجعة العدالة في الأجور؟','استراتيجيات الاحتفاظ بالموظفين عبر التعويضات']
+    },
+    en:{name:'Compensation & Benefits Advisor',desc:'Design competitive and equitable compensation structures',
+      tags:['Salary Bands','Total Rewards','Pay Equity','Benchmarking'],
+      sys:'You are a Compensation & Benefits expert. Help organizations design competitive and equitable compensation: market analysis, salary bands, grade structures, total rewards, pay equity, and incentives. Give specific data-driven recommendations.',
+      sugg:['How to design salary band structures?','Total rewards components?','How to conduct pay equity review?','Retention strategies through compensation']
+    }
+  },
+  compliance:{
+    key:'compliance',icon:'ti-shield-check',cls:'ic-r',
+    ar:{name:'مستشار الامتثال في الموارد البشرية',desc:'ضمان الامتثال التام للوائح والقوانين العمالية',
+      tags:['نظام العمل السعودي','السعودة','GDPR','الامتثال التنظيمي'],
+      sys:`أنت خبير الامتثال في الموارد البشرية متخصص في نظام العمل السعودي والسعودة (نطاقات) ومتطلبات GOSI وقوانين العمل الدولية. تساعد على فهم وتطبيق المتطلبات القانونية وتجنب المخاطر والعقوبات. كن دقيقاً ومحدداً في الأحكام.
+
+## إجازات مدفوعة الأجر — نظام العمل السعودي (المادة 113 وما بعدها):
+- إجازة الزواج: 5 أيام
+- إجازة وفاة الزوجة أو الوالدين أو الأبناء (الأصول والفروع): 5 أيام
+- إجازة وفاة الأخ أو الأخت: 3 أيام
+- إجازة الوضع (الأمومة): 10 أسابيع (قابلة للتوزيع قبل/بعد الولادة، 4 أسابيع إلزامية بعد الولادة)
+- إجازة أداء الحج: 10 أيام مرة واحدة طوال مدة الخدمة
+- الإجازة السنوية: 21 يوماً (تصبح 30 يوماً بعد 5 سنوات خدمة)
+- إجازة الأمومة للسعوديين: تتحملها التأمينات الاجتماعية (GOSI)
+
+## مكافأة نهاية الخدمة (المادة 84):
+- أقل من سنتين: لا يستحق
+- من سنتين إلى أقل من 5 سنوات: نصف أجر شهري عن كل سنة
+- من 5 سنوات إلى أقل من 10 سنوات: ثلثا أجر شهري عن كل سنة
+- 10 سنوات فأكثر: أجر شهري كامل عن كل سنة
+- في حالة الاستقالة: ثلث المكافأة من سنتين إلى 5، ثلثان من 5 إلى 10، كاملة بعد 10 سنوات
+- في حالة الإنهاء من صاحب العمل: المكافأة كاملة بصرف النظر عن المدة (بعد السنتين)
+
+## فترة التجربة والإنهاء:
+- فترة التجربة: 90 يوماً قابلة للتمديد إلى 180 يوماً باتفاق مكتوب
+- مهلة الإشعار بالإنهاء: 60 يوماً للعقود غير المحددة المدة
+
+## التأمينات الاجتماعية (GOSI):
+- السعوديون: 9% من صاحب العمل + 9% من الموظف (مخاطر مهنية + تأمين اجتماعي)
+- غير السعوديين: 2% من صاحب العمل فقط (مخاطر مهنية)
+
+التزم دائماً بهذه الأرقام القانونية الدقيقة عند الإجابة.`,
+      sugg:['ما أحكام الإنهاء في نظام العمل السعودي؟','كيف أحسب مكافأة نهاية الخدمة؟','متطلبات السعودة لقطاعي','ما حقوق الموظف في الإجازات؟']
+    },
+    en:{name:'HR Compliance Advisor',desc:'Ensure full compliance with labor laws and regulations',
+      tags:['Saudi Labor Law','Saudization','GDPR','Regulatory Compliance'],
+      sys:`You are an HR compliance expert specializing in Saudi Labor Law, Saudization (Nitaqat), GOSI requirements, and international labor law. Help understand and apply legal requirements, avoid risks and penalties. Be precise and specific in legal provisions.
+
+## Paid Leaves — Saudi Labor Law (Article 113+):
+- Marriage leave: 5 days
+- Death of spouse, parents, or children (direct ascendants/descendants): 5 days
+- Death of brother or sister: 3 days
+- Maternity leave: 10 weeks (at least 4 weeks must be taken post-delivery)
+- Hajj leave: 10 days, once per employment lifetime
+- Annual leave: 21 days (increases to 30 days after 5 years of service)
+
+## End-of-Service Award (Article 84):
+- Less than 2 years: not entitled
+- 2 to less than 5 years: half month salary per year
+- 5 to less than 10 years: two-thirds month salary per year
+- 10 years or more: full month salary per year
+- Resignation: one-third if 2–5 yrs, two-thirds if 5–10 yrs, full if 10+ yrs
+- Employer termination: full award regardless of tenure (after 2 years)
+
+## Probation & Termination:
+- Probation period: 90 days, extendable to 180 days by written agreement
+- Notice period for open-ended contracts: 60 days
+
+## GOSI Contributions:
+- Saudis: 9% employer + 9% employee
+- Non-Saudis: 2% employer only (occupational hazards)
+
+Always use these exact legal figures when answering.`,
+      sugg:['Termination provisions in Saudi Labor Law?','How to calculate end-of-service benefits?','Saudization requirements for my sector','Employee leave rights?']
+    }
+  },
+  culture:{
+    key:'culture',icon:'ti-heart',cls:'ic-pk',
+    ar:{name:'مُنشئ الثقافة والانخراط الوظيفي',desc:'بناء ثقافة تنظيمية قوية وتعزيز انخراط الموظفين',
+      tags:['الثقافة التنظيمية','الانخراط الوظيفي','القيم','بيئة العمل'],
+      sys:'أنت خبير الثقافة التنظيمية والانخراط الوظيفي. تساعد على تشخيص الثقافة الحالية وتصميم مبادرات الانخراط وقياس eNPS وبناء برامج التقدير وتعزيز قيم المنظمة. استخدم أطر CVF وDenison وGallup Q12.',
+      sugg:['كيف أقيس ثقافة منظمتي؟','استراتيجيات تحسين الانخراط الوظيفي','كيف أبني برنامج تقدير وامتنان؟','كيف أحسن نتائج استطلاع eNPS؟']
+    },
+    en:{name:'Culture & Engagement Builder',desc:'Build a strong organizational culture and boost employee engagement',
+      tags:['Org Culture','Employee Engagement','Values','Work Environment'],
+      sys:'You are an organizational culture and employee engagement expert. Help diagnose current culture, design engagement initiatives, measure eNPS, build recognition programs, and reinforce organizational values. Use CVF, Denison, and Gallup Q12 frameworks.',
+      sugg:['How to measure my organizational culture?','Employee engagement improvement strategies','How to build a recognition program?','How to improve eNPS survey results?']
+    }
+  },
+  data_analyst:{
+    key:'data_analyst',icon:'ti-chart-bar',cls:'ic-b',
+    ar:{name:'محلل بيانات الموارد البشرية',desc:'تحليل بيانات الموارد البشرية واستخراج رؤى استراتيجية',
+      tags:['تحليل البيانات','مؤشرات الأداء','تحليلات الأفراد','التنبؤ'],
+      sys:'أنت محلل بيانات متخصص في الموارد البشرية. تساعد على تحليل بيانات القوى العاملة: معدلات الدوران، تكلفة التوظيف، الانخراط، الأداء، التنوع. تستخدم أساليب إحصائية ونماذج تنبؤية وتقدم رؤى قابلة للتنفيذ بلغة واضحة.',
+      sugg:['كيف أحسب معدل دوران الموظفين؟','ما أهم مؤشرات الأداء للموارد البشرية؟','كيف أبني نموذج تنبؤ بالتسرب الوظيفي؟','تحليل فجوة المواهب في منظمتي']
+    },
+    en:{name:'HR Data Analyst',desc:'Analyze HR data and extract strategic insights',
+      tags:['Data Analysis','KPIs','People Analytics','Predictive Models'],
+      sys:'You are an HR data analyst. Help analyze workforce data: turnover rates, cost per hire, engagement, performance, diversity. Use statistical methods and predictive models, present actionable insights in clear language.',
+      sugg:['How to calculate employee turnover rate?','Key HR performance indicators?','Build a turnover prediction model?','Talent gap analysis in my organization']
+    }
+  },
+  dei:{
+    key:'dei',icon:'ti-users-group',cls:'ic-p',
+    ar:{name:'أخصائي التنوع والإدماج والانتماء',desc:'بناء بيئة عمل متنوعة وشاملة ومنتمية',
+      tags:['التنوع','الإدماج','DEI','العدالة'],
+      sys:'أنت أخصائي التنوع والمساواة والإدماج (DEI). تساعد المنظمات على بناء استراتيجيات DEI شاملة: قياس التنوع، مكافحة التحيز، بناء برامج الإدماج، تصميم سياسات العدالة. تراعي السياق السعودي والعالمي.',
+      sugg:['كيف أقيس مستوى التنوع في منظمتي؟','استراتيجيات تعزيز الإدماج في مكان العمل','كيف أقلل التحيز في عملية التوظيف؟','بناء برنامج DEI من الصفر']
+    },
+    en:{name:'DEI Specialist',desc:'Build a diverse, inclusive, and belonging workplace',
+      tags:['Diversity','Inclusion','DEI','Equity'],
+      sys:'You are a Diversity, Equity & Inclusion (DEI) specialist. Help organizations build comprehensive DEI strategies: measure diversity, combat bias, build inclusion programs, design equity policies. Consider both Saudi and global contexts.',
+      sugg:['How to measure diversity in my organization?','Inclusion strategies in the workplace','Reduce bias in recruitment process?','Build a DEI program from scratch']
+    }
+  },
+  email:{
+    key:'email',icon:'ti-mail',cls:'ic-a',
+    ar:{name:'كاتب الاتصالات والبريد الإلكتروني في الموارد البشرية',desc:'صياغة اتصالات موارد بشرية احترافية وفعّالة',
+      tags:['البريد الإلكتروني','اتصالات الموارد البشرية','الرسائل الرسمية','الإشعارات'],
+      sys:'أنت متخصص في كتابة اتصالات الموارد البشرية الاحترافية. تكتب رسائل بريد إلكتروني، إشعارات، خطابات، رسائل عرض وقبول، رسائل الإنهاء، إشعارات السياسات، وكل أنواع مراسلات الموارد البشرية باللغتين العربية والإنجليزية. تحافظ على النبرة المهنية مع مراعاة الحساسية.',
+      sugg:['اكتب خطاب إنهاء عقد باحترافية','رسالة عرض وظيفي لمرشح متميز','بريد إلكتروني لإشعار تغيير السياسة','رسالة ترحيب بموظف جديد']
+    },
+    en:{name:'HR Email Communicator',desc:'Draft professional and effective HR communications',
+      tags:['Email','HR Communications','Formal Letters','Notifications'],
+      sys:'You are an HR communications specialist. Write professional emails, notifications, letters, offer/acceptance letters, termination letters, policy notices, and all HR correspondence in both Arabic and English. Maintain professional tone with appropriate sensitivity.',
+      sugg:['Write a professional termination letter','Job offer letter for top candidate','Policy change notification email','Welcome email for new employee']
+    }
+  },
+  emp_rel:{
+    key:'emp_rel',icon:'ti-handshake',cls:'ic-t',
+    ar:{name:'مستشار علاقات الموظفين',desc:'إدارة علاقات الموظفين وحل النزاعات وتحسين بيئة العمل',
+      tags:['علاقات الموظفين','النزاعات','التأديب','الشكاوى'],
+      sys:'أنت مستشار علاقات الموظفين ذو خبرة واسعة. تساعد على إدارة قضايا علاقات الموظفين: التحقيق في الشكاوى، إجراءات التأديب، حل النزاعات، وضع سياسات العلاقات، تحسين بيئة العمل. تعمل وفق نظام العمل السعودي وأفضل الممارسات الدولية.',
+      sugg:['كيف أتعامل مع شكوى موظف؟','إجراءات التأديب الصحيحة','كيف أحقق في نزاع بين موظفين؟','بناء سياسة الباب المفتوح']
+    },
+    en:{name:'Employee Relations Advisor',desc:'Manage employee relations, resolve conflicts, and improve work environment',
+      tags:['Employee Relations','Conflicts','Discipline','Grievances'],
+      sys:'You are an experienced Employee Relations advisor. Help manage ER issues: investigate complaints, disciplinary procedures, conflict resolution, relations policy development, work environment improvement. Work according to Saudi Labor Law and international best practices.',
+      sugg:['How to handle an employee complaint?','Correct disciplinary procedures','Investigate conflict between employees?','Build an open-door policy']
+    }
+  },
+  recruiter:{
+    key:'recruiter',icon:'ti-users',cls:'ic-g',
+    ar:{name:'مساعد التوظيف والاستقطاب',desc:'تحسين عمليات التوظيف وتجربة المرشحين',
+      tags:['التوظيف','الاستقطاب','تجربة المرشح','مسار التوظيف'],
+      sys:'أنت مساعد توظيف واستقطاب متخصص. تساعد على تحسين عمليات التوظيف: كتابة إعلانات وظيفية جذابة، تصميم مسار التوظيف، إعداد أسئلة المقابلات، تقييم المرشحين، التفاوض على العروض، تحسين تجربة المرشح وتقليل وقت التوظيف.',
+      sugg:['كيف أكتب إعلان وظيفي جذاب؟','أسئلة مقابلة فعّالة لمدير مشروع','كيف أحسّن تجربة المرشح؟','استراتيجيات الاستقطاب الرقمي']
+    },
+    en:{name:'Recruiter Assistant',desc:'Optimize recruitment processes and candidate experience',
+      tags:['Recruitment','Sourcing','Candidate Experience','Pipeline'],
+      sys:'You are a specialized recruitment and sourcing assistant. Help improve recruitment: write compelling job ads, design hiring pipelines, prepare interview questions, evaluate candidates, negotiate offers, improve candidate experience and reduce time-to-hire.',
+      sugg:['How to write a compelling job posting?','Effective interview questions for project manager','How to improve candidate experience?','Digital sourcing strategies']
+    }
+  },
+  wellbeing:{
+    key:'wellbeing',icon:'ti-heart-rate-monitor',cls:'ic-pk',
+    ar:{name:'مستشار رفاهية الموظفين',desc:'تصميم برامج رفاهية شاملة وتحسين صحة الموظفين',
+      tags:['رفاهية الموظفين','الصحة النفسية','التوازن','برامج الرعاية'],
+      sys:'أنت مستشار رفاهية الموظفين. تساعد على تصميم وتنفيذ برامج رفاهية شاملة: الصحة الجسدية والنفسية، التوازن بين العمل والحياة، الوقاية من الاحتراق الوظيفي، برامج المساعدة، والرعاية النفسية. تستند لأحدث الأبحاث وأفضل الممارسات.',
+      sugg:['كيف أبني برنامج رفاهية للموظفين؟','كيف أكتشف الاحتراق الوظيفي المبكر؟','استراتيجيات تحسين التوازن بين العمل والحياة','برامج الصحة النفسية في مكان العمل']
+    },
+    en:{name:'Employee Wellbeing Advisor',desc:'Design comprehensive wellbeing programs and improve employee health',
+      tags:['Employee Wellbeing','Mental Health','Work-Life Balance','Care Programs'],
+      sys:'You are an Employee Wellbeing advisor. Help design and implement comprehensive wellbeing programs: physical and mental health, work-life balance, burnout prevention, assistance programs, and psychological care. Based on latest research and best practices.',
+      sugg:['How to build an employee wellbeing program?','How to detect early burnout signs?','Work-life balance improvement strategies','Mental health programs in the workplace']
+    }
+  },
+  reporting:{
+    key:'reporting',icon:'ti-report-analytics',cls:'ic-b',
+    ar:{name:'مُنشئ لوحات التقارير والموارد البشرية',desc:'تصميم وبناء تقارير ولوحات بيانات الموارد البشرية',
+      tags:['التقارير','لوحات البيانات','Power BI','مؤشرات الأداء'],
+      sys:'أنت خبير تقارير ولوحات بيانات الموارد البشرية. تساعد على تصميم وبناء تقارير الموارد البشرية ولوحات مؤشرات الأداء باستخدام أدوات مثل Power BI وExcel وTableau. تحدد المقاييس الصحيحة وتصمم تصورات بصرية مؤثرة وتبني نماذج بيانات فعّالة.',
+      sugg:['كيف أبني لوحة بيانات الموارد البشرية في Power BI؟','ما أهم تقارير الموارد البشرية الشهرية؟','كيف أصمم تقرير الدوران الوظيفي؟','نموذج Excel لتتبع مؤشرات الموارد البشرية']
+    },
+    en:{name:'HR Reporting Dashboard Builder',desc:'Design and build HR reports and data dashboards',
+      tags:['Reporting','Dashboards','Power BI','KPI Metrics'],
+      sys:'You are an HR reporting and dashboard expert. Help design and build HR reports and KPI dashboards using Power BI, Excel, and Tableau. Identify correct metrics, design impactful visualizations, and build effective data models.',
+      sugg:['How to build an HR dashboard in Power BI?','Key monthly HR reports?','How to design a turnover report?','Excel template for tracking HR KPIs']
+    }
+  },
+  payroll:{
+    key:'payroll',icon:'ti-receipt',cls:'ic-g',
+    ar:{name:'مستشار الرواتب والمستحقات',desc:'إدارة الرواتب والمستحقات وفق الأنظمة السعودية',
+      tags:['الرواتب','GOSI','مكافأة نهاية الخدمة','كشوف الرواتب'],
+      sys:`أنت مستشار متخصص في إدارة الرواتب والمستحقات في المملكة العربية السعودية. تساعد على حساب الرواتب والبدلات والمكافآت والتأمينات الاجتماعية (GOSI) ومكافأة نهاية الخدمة وفق نظام العمل السعودي. كن دقيقاً في الأرقام والمعادلات.
+
+## مكافأة نهاية الخدمة (المادة 84):
+- أقل من سنتين: لا يستحق
+- من سنتين إلى أقل من 5 سنوات: نصف أجر شهري عن كل سنة
+- من 5 سنوات إلى أقل من 10 سنوات: ثلثا أجر شهري عن كل سنة
+- 10 سنوات فأكثر: أجر شهري كامل عن كل سنة
+- استقالة: ثلث (2-5 سنوات)، ثلثان (5-10 سنوات)، كاملة (10+ سنوات)
+- إنهاء من صاحب العمل: كاملة بعد سنتين
+
+## التأمينات الاجتماعية (GOSI):
+- السعوديون: 9% صاحب عمل + 9% موظف
+- غير السعوديين: 2% صاحب عمل فقط
+
+## إجازات مدفوعة:
+- وفاة الزوجة أو الأصول والفروع (والدين/أبناء): 5 أيام
+- وفاة الأخ أو الأخت: 3 أيام
+- زواج: 5 أيام
+- حج: 10 أيام (مرة واحدة)
+- أمومة: 10 أسابيع
+- سنوية: 21 يوماً (30 بعد 5 سنوات)
+
+التزم دائماً بهذه الأرقام الدقيقة عند الحساب.`,
+      sugg:['كيف أحسب مكافأة نهاية الخدمة؟','نسب التأمينات الاجتماعية (GOSI) للسعوديين والمقيمين','كيف أحسب بدل الإجازة السنوية؟','ما مكونات كشف الراتب في السعودية؟']
+    },
+    en:{name:'Payroll Advisor',desc:'Manage payroll and entitlements under Saudi regulations',
+      tags:['Payroll','GOSI','End-of-Service','Salary Processing'],
+      sys:'You are a payroll and entitlements specialist in Saudi Arabia. Help calculate salaries, allowances, bonuses, GOSI contributions, end-of-service benefits, and tax withholdings per Saudi Labor Law and financial regulations. Be precise with numbers and formulas.',
+      sugg:['How to calculate end-of-service benefits?','GOSI rates for Saudis and expats','How to calculate annual leave pay?','Salary slip components in Saudi Arabia?']
+    }
+  }
+};
+
+const NAV_STRUCT=[
+  {gk:'ov',items:[{k:'dashboard',ic:'ti-layout-dashboard'}]},
+  {gk:'hr',items:[{k:'jd',ic:'ti-file-description'},{k:'comp_adv',ic:'ti-coin'},{k:'recruit_adv',ic:'ti-users'},{k:'payroll_adv',ic:'ti-receipt'},{k:'admin',ic:'ti-clipboard-list'},{k:'policy',ic:'ti-book'},{k:'compliance_adv',ic:'ti-shield-check'}]},
+  {gk:'tp',items:[{k:'talent',ic:'ti-award'},{k:'perf',ic:'ti-chart-line'},{k:'lnd',ic:'ti-school'},{k:'career',ic:'ti-road'},{k:'wellbeing_adv',ic:'ti-heart-rate-monitor'}]},
+  {gk:'org',items:[{k:'od',ic:'ti-hierarchy'},{k:'orgm',ic:'ti-sitemap'},{k:'change_adv',ic:'ti-refresh'},{k:'people_adv',ic:'ti-chart-dots'},{k:'dei_adv',ic:'ti-users-group'},{k:'lead',ic:'ti-crown'},{k:'culture_adv',ic:'ti-heart'}]},
+  {gk:'str',items:[{k:'strategy',ic:'ti-target'},{k:'wfp',ic:'ti-graph'},{k:'score',ic:'ti-layout-grid'},{k:'sci',ic:'ti-flask'},{k:'reporting_adv',ic:'ti-report-analytics'}]},
+  {gk:'ai_sec',items:[{k:'ai_hub',ic:'ti-cpu'},{k:'ai_tools_adv',ic:'ti-settings-automation'},{k:'audit_adv',ic:'ti-clipboard-check'},{k:'email_adv',ic:'ti-mail'},{k:'emp_rel_adv',ic:'ti-handshake'},{k:'automation_adv',ic:'ti-settings-automation'}]},
+  {gk:'cert',items:[{k:'certs',ic:'ti-certificate'}]}
+];
+
+const NAV_LABELS={
+  ar:{ov:'نظرة عامة',hr:'الموارد البشرية الأساسية',tp:'المواهب والأداء',org:'التطوير التنظيمي',str:'الموارد البشرية الاستراتيجية',ai_sec:'مستشارو الذكاء الاصطناعي',cert:'الشهادات المهنية',
+    dashboard:'لوحة التحكم',jd:'المسميات الوظيفية',comp_adv:'التعويضات والمزايا',recruit_adv:'التوظيف والاستقطاب',payroll_adv:'الرواتب والمستحقات',admin:'الإدارة التشغيلية',policy:'مكتبة السياسات',compliance_adv:'الامتثال والأنظمة',
+    talent:'إدارة المواهب',perf:'إدارة الأداء',lnd:'التعلم والتطوير',career:'المسار المهني',wellbeing_adv:'رفاهية الموظفين',
+    od:'التطوير التنظيمي',orgm:'إدارة المنظمة',change_adv:'إدارة التغيير',people_adv:'تحليلات الأفراد',dei_adv:'التنوع والإدماج',lead:'القيادة',culture_adv:'الثقافة والانخراط',
+    strategy:'استراتيجية الموارد البشرية',wfp:'تخطيط القوى العاملة',score:'بطاقة الأداء المتوازن',sci:'الموارد البشرية العلمية',reporting_adv:'التقارير ولوحات البيانات',
+    ai_hub:'مركز الذكاء الاصطناعي',ai_tools_adv:'أدوات الذكاء الاصطناعي',audit_adv:'جاهزية التدقيق',email_adv:'الاتصالات والبريد',emp_rel_adv:'علاقات الموظفين',automation_adv:'بناء الأتمتة',
+    certs:'HRCI / SHRM / ATD'
+  },
+  en:{ov:'Overview',hr:'Core HR',tp:'Talent & Performance',org:'Organizational',str:'Strategic HR',ai_sec:'AI Advisors',cert:'Certifications',
+    dashboard:'Dashboard',jd:'Job Descriptions',comp_adv:'Compensation & Benefits',recruit_adv:'Recruitment',payroll_adv:'Payroll',admin:'HR Admin',policy:'Policy Library',compliance_adv:'Compliance',
+    talent:'Talent Management',perf:'Performance',lnd:'Learning & Development',career:'Career Pathing',wellbeing_adv:'Employee Wellbeing',
+    od:'Org Development',orgm:'Org Management',change_adv:'Change Management',people_adv:'People Analytics',dei_adv:'DEI',lead:'Leadership',culture_adv:'Culture & Engagement',
+    strategy:'HR Strategy',wfp:'Workforce Planning',score:'HR Scorecard',sci:'Scientific HR',reporting_adv:'Reporting & Dashboards',
+    ai_hub:'AI Hub',ai_tools_adv:'AI Tools Advisor',audit_adv:'Audit Readiness',email_adv:'Email Communicator',emp_rel_adv:'Employee Relations',automation_adv:'Automation Builder',
+    certs:'HRCI / SHRM / ATD'
+  }
+};
+
+// Map page keys to advisor keys
+const PAGE_TO_ADVISOR={
+  comp_adv:'comp_ben',recruit_adv:'recruiter',payroll_adv:'payroll',compliance_adv:'compliance',
+  wellbeing_adv:'wellbeing',change_adv:'change_mgmt',people_adv:'data_analyst',dei_adv:'dei',
+  culture_adv:'culture',reporting_adv:'reporting',ai_tools_adv:'ai_tools',audit_adv:'hr_audit',
+  email_adv:'email',emp_rel_adv:'emp_rel',automation_adv:'automation'
+};
+
+/* ===================== RENDER NAV ===================== */
+function renderNav(){
+  const L=NAV_LABELS[lang];
+  let h='';
+  NAV_STRUCT.forEach(g=>{
+    h+=`<div class="ng"><div class="ng-l">${L[g.gk]||g.gk}</div>`;
+    g.items.forEach(it=>{
+      const isAI=PAGE_TO_ADVISOR[it.k]||it.k==='ai_hub';
+      h+=`<div class="ni${page===it.k?' on':''}" onclick="goPage('${it.k}')"><i class="ti ${it.ic}"></i>${L[it.k]||it.k}${isAI?'<span class="ai-badge">AI</span>':''}</div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('nav').innerHTML=h;
+}
+
+/* ===================== LANG ===================== */
+function setLang(l){
+  lang=l;
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  document.getElementById('btn-ar').classList.toggle('on',l==='ar');
+  document.getElementById('btn-en').classList.toggle('on',l==='en');
+  document.getElementById('brtx').textContent=l==='ar'?'منصة الإدارة الاستراتيجية للموارد البشرية':'Strategic HR Management Platform';
+  document.getElementById('brsub').textContent=l==='ar'?'بوابة الموارد البشرية الاستراتيجية':'Strategic HR Professional Portal';
+  document.getElementById('ai-bl').textContent=l==='ar'?'مركز الذكاء الاصطناعي':'AI Hub';
+  document.getElementById('loc-l').textContent=l==='ar'?'جدة، المملكة العربية السعودية':'Jeddah, Saudi Arabia';
+  document.getElementById('pg-t').textContent=NAV_LABELS[l][page]||page;
+  renderNav();
+  renderPage();
+}
+
+function toggleSB(){
+  sbOpen=!sbOpen;
+  document.getElementById('sb').classList.toggle('closed',!sbOpen);
+}
+
+function goPage(id){
+  page=id;
+  document.getElementById('pg-t').textContent=NAV_LABELS[lang][id]||id;
+  renderNav();
+  renderPage();
+}
+
+/* ===================== RENDER PAGE ===================== */
+function renderPage(){
+  const ct=document.getElementById('ct');
+  // Route to advisor if applicable
+  if(PAGE_TO_ADVISOR[page]){renderAdvisor(PAGE_TO_ADVISOR[page]);return;}
+  const routes={
+    dashboard:renderDash,ai_hub:renderAIHub,jd:renderJD,
+    talent:renderTalent,od:renderOD,score:renderScore,certs:renderCerts,
+    policy:renderPolicy,admin:renderAdmin,perf:renderPerf,
+    lnd:renderLnD,career:renderCareer,orgm:renderOrgM,
+    strategy:renderStrategy,wfp:renderWFP,sci:renderSci,lead:renderLead
+  };
+  ct.innerHTML=(routes[page]||renderDash)();
+}
+
+/* ===================== ADVISOR RENDERER ===================== */
+function renderAdvisor(advKey){
+  const adv=ADVISORS[advKey];
+  const d=adv[lang];
+  const hid='chat_'+advKey+'_'+lang;
+  if(!chatHistories[hid])chatHistories[hid]=[];
+  const msgs=chatHistories[hid];
+
+  const wlcMsg=lang==='ar'?`مرحباً! أنا ${d.name}. ${d.desc}. كيف يمكنني مساعدتك اليوم؟`
+    :`Hello! I'm the ${d.name}. ${d.desc}. How can I help you today?`;
+
+  const ct=document.getElementById('ct');
+  ct.innerHTML=`
+  <div class="adv-wrap">
+    <div class="adv-header">
+      <div class="adv-ic ${adv.cls}"><i class="ti ${adv.icon}"></i></div>
+      <div style="flex:1;min-width:0">
+        <div class="adv-name">${d.name}</div>
+        <div class="adv-desc">${d.desc}</div>
+        <div class="adv-tags">${d.tags.map(t=>`<span class="adv-tag">${t}</span>`).join('')}</div>
+      </div>
+      <button class="btn" onclick="clearChat('${hid}','${advKey}')"><i class="ti ti-trash"></i></button>
+    </div>
+    <div class="chat-a" id="ca_${advKey}">
+      <div class="msg a"><div class="ml">AI</div>${wlcMsg}</div>
+      ${msgs.map(m=>`<div class="msg ${m.role==='user'?'u':'a'}">${m.role==='assistant'?'<div class="ml">AI</div>':''}${m.content.replace(/\n/g,'<br>')}</div>`).join('')}
+    </div>
+    <div class="qsugg">${d.sugg.map(s=>`<button class="qs" onclick="sendAdvMsg('${advKey}','${hid}',this.textContent)">${s}</button>`).join('')}</div>
+    <div class="cin">
+      <input id="ci_${advKey}" placeholder="${lang==='ar'?'اكتب سؤالك هنا...':'Type your question here...'}" onkeydown="if(event.key==='Enter')sendAdvChat('${advKey}','${hid}')">
+      <button onclick="sendAdvChat('${advKey}','${hid}')"><i class="ti ti-send"></i></button>
+    </div>
+  </div>`;
+  scrollChat(advKey);
+}
+
+function clearChat(hid,advKey){
+  chatHistories[hid]=[];
+  renderAdvisor(advKey);
+}
+
+function scrollChat(advKey){
+  const el=document.getElementById('ca_'+advKey);
+  if(el)setTimeout(()=>el.scrollTop=el.scrollHeight,50);
+}
+
+async function sendAdvMsg(advKey,hid,msg){
+  const inp=document.getElementById('ci_'+advKey);
+  if(inp)inp.value=msg;
+  await sendAdvChat(advKey,hid);
+}
+
+async function sendAdvChat(advKey,hid){
+  const inp=document.getElementById('ci_'+advKey);
+  const msg=inp?.value?.trim();
+  if(!msg)return;
+  inp.value='';
+  const adv=ADVISORS[advKey];
+  const d=adv[lang];
+  const area=document.getElementById('ca_'+advKey);
+  if(!chatHistories[hid])chatHistories[hid]=[];
+  area.innerHTML+=`<div class="msg u">${msg}</div>`;
+  const tid='tm_'+Date.now();
+  area.innerHTML+=`<div class="msg a" id="${tid}"><div class="ml">AI</div><span class="thk">...</span></div>`;
+  area.scrollTop=area.scrollHeight;
+  chatHistories[hid].push({role:'user',content:msg});
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:600,stream:true,system:d.sys,messages:chatHistories[hid]})});
+    const el=document.getElementById(tid);
+    let full='';
+    const reader=r.body.getReader();
+    const dec=new TextDecoder();
+    while(true){
+      const{done,value}=await reader.read();
+      if(done)break;
+      const chunk=dec.decode(value);
+      for(const line of chunk.split('\n')){
+        if(!line.startsWith('data:'))continue;
+        const raw=line.slice(5).trim();
+        if(raw==='[DONE]')break;
+        try{
+          const j=JSON.parse(raw);
+          if(j.type==='content_block_delta'&&j.delta?.text){
+            full+=j.delta.text;
+            if(el)el.innerHTML=`<div class="ml">AI</div>${full.replace(/\n/g,'<br>')}`;
+            area.scrollTop=area.scrollHeight;
+          }
+        }catch{}
+      }
+    }
+    if(full)chatHistories[hid].push({role:'assistant',content:full});
+  }catch(e){
+    const el=document.getElementById(tid);
+    if(el)el.innerHTML=`<div class="ml">AI</div>${lang==='ar'?'حدث خطأ، يرجى المحاولة مجدداً.':'Error, please try again.'}`;
+  }
+  area.scrollTop=area.scrollHeight;
+}
+
+/* ===================== DASHBOARD ===================== */
+function renderDash(){
+  const isAr=lang==='ar';
+  const mtr=[
+    {l:isAr?'الوحدات النشطة':'Active Modules',v:'30',c:'var(--ac)',s:isAr?'جميع المجالات مغطاة':'All domains covered'},
+    {l:isAr?'مستشارو الذكاء الاصطناعي':'AI Advisors',v:'15',c:'var(--gr)',s:isAr?'مدعوم بـ Claude':'Powered by Claude'},
+    {l:isAr?'مسارات الشهادات':'Cert Tracks',v:'3',c:'var(--am)',s:'HRCI · SHRM · ATD'},
+    {l:isAr?'الأطر المرجعية':'Frameworks',v:'+40',c:'var(--pu)',s:isAr?'جاهزة للاستخدام':'Ready to use'}
+  ];
+  const mods=[
+    {id:'ai_hub',ic:'ti-cpu',cl:'ic-b',n:isAr?'مركز الذكاء الاصطناعي':'AI Hub',d:isAr?'15 مستشاراً ذكياً متخصصاً':'15 specialized AI advisors'},
+    {id:'jd',ic:'ti-file-description',cl:'ic-b',n:isAr?'مُنشئ المسميات الوظيفية':'JD Builder',d:isAr?'توليد وصف وظيفي احترافي':'AI-powered JD generation'},
+    {id:'comp_adv',ic:'ti-coin',cl:'ic-g',n:isAr?'التعويضات والمزايا':'Comp & Benefits',d:isAr?'مستشار ذكي + نطاقات الرواتب':'AI advisor + salary bands'},
+    {id:'recruit_adv',ic:'ti-users',cl:'ic-a',n:isAr?'التوظيف والاستقطاب':'Recruitment',d:isAr?'مساعد توظيف ذكي':'AI recruitment assistant'},
+    {id:'talent',ic:'ti-award',cl:'ic-p',n:isAr?'إدارة المواهب':'Talent Management',d:isAr?'مصفوفة التسعة وتخطيط الخلافة':'9-box, succession, IDP'},
+    {id:'payroll_adv',ic:'ti-receipt',cl:'ic-g',n:isAr?'الرواتب والمستحقات':'Payroll',d:isAr?'مستشار الرواتب ونظام العمل السعودي':'Saudi payroll AI advisor'},
+    {id:'compliance_adv',ic:'ti-shield-check',cl:'ic-r',n:isAr?'الامتثال والأنظمة':'Compliance',d:isAr?'مستشار نظام العمل السعودي':'Saudi Labor Law advisor'},
+    {id:'culture_adv',ic:'ti-heart',cl:'ic-pk',n:isAr?'الثقافة والانخراط':'Culture & Engagement',d:isAr?'بناء ثقافة تنظيمية قوية':'Build strong org culture'},
+    {id:'reporting_adv',ic:'ti-report-analytics',cl:'ic-b',n:isAr?'التقارير ولوحات البيانات':'Reporting & Dashboards',d:isAr?'Power BI ومؤشرات الأداء':'Power BI and KPI dashboards'},
+    {id:'dei_adv',ic:'ti-users-group',cl:'ic-p',n:isAr?'التنوع والإدماج':'DEI',d:isAr?'أخصائي التنوع والإدماج':'DEI specialist'},
+    {id:'certs',ic:'ti-certificate',cl:'ic-g',n:isAr?'مركز الشهادات':'Certifications',d:'HRCI · SHRM · ATD'},
+    {id:'score',ic:'ti-layout-grid',cl:'ic-a',n:isAr?'بطاقة الأداء المتوازن':'HR Scorecard',d:isAr?'مؤشرات الأداء الاستراتيجية':'Strategic HR KPIs'}
+  ];
+  return `<div class="wlc"><h2>${isAr?'مرحباً عاطف 👋':'Welcome back, Atif 👋'}</h2><p>${isAr?'منصتك المتكاملة للموارد البشرية — 15 مستشاراً ذكياً + جميع أدوات الموارد البشرية الاستراتيجية':'Your integrated HR platform — 15 AI Advisors + full strategic HR toolkit'}</p></div>
+  <div class="mtr">${mtr.map(m=>`<div class="mc"><div class="mc-l">${m.l}</div><div class="mc-v" style="color:${m.c}">${m.v}</div><div class="mc-s">${m.s}</div></div>`).join('')}</div>
+  <div class="mg">${mods.map(m=>`<div class="mcd" onclick="goPage('${m.id}')"><div class="mcd-i ${m.cl}"><i class="ti ${m.ic}"></i></div><h4>${m.n}</h4><p>${m.d}</p></div>`).join('')}</div>`;
+}
+
+/* ===================== AI HUB ===================== */
+function renderAIHub(){
+  const isAr=lang==='ar';
+  const advList=Object.values(ADVISORS);
+  return `<div class="ph"><div class="ph-ic ic-b"><i class="ti ti-cpu"></i></div><div><h2>${isAr?'مركز الذكاء الاصطناعي للموارد البشرية':'HR Artificial Intelligence Hub'}</h2><p>${isAr?'15 مستشاراً ذكياً متخصصاً في جميع مجالات الموارد البشرية':'15 specialized AI advisors covering all HR domains'}</p></div></div>
+  <div class="ai-grid">${advList.map(adv=>{
+    const d=adv[lang];
+    const pKey=Object.keys(PAGE_TO_ADVISOR).find(k=>PAGE_TO_ADVISOR[k]===adv.key)||adv.key;
+    return `<div class="ai-card" onclick="goPage('${pKey}')">
+      <div class="ai-card-top"><div class="ai-card-ic ${adv.cls}"><i class="ti ${adv.icon}"></i></div><div><h4>${d.name}</h4><span class="atag">AI</span></div></div>
+      <p>${d.desc}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:3px">${d.tags.slice(0,2).map(t=>`<span class="adv-tag">${t}</span>`).join('')}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+/* ===================== JD ===================== */
+function renderJD(){
+  const isAr=lang==='ar';
+  return `<div class="ph"><div class="ph-ic ic-b"><i class="ti ti-file-description"></i></div><div><h2>${isAr?'مُنشئ المسميات الوظيفية':'Job Description Builder'}</h2><p>${isAr?'توليد وصف وظيفي احترافي مدعوم بالذكاء الاصطناعي':'AI-powered professional JD generation'}</p></div></div>
+  <div class="tg one"><div class="tc">
+    <h4><i class="ti ti-sparkles"></i> ${isAr?'إنشاء الوصف الوظيفي بالذكاء الاصطناعي':'AI Job Description Generator'}</h4>
+    <div class="fr"><div class="fl"><label>${isAr?'المسمى الوظيفي':'Job Title'}</label><input class="fi" id="jd-t" placeholder="${isAr?'مثال: مدير الموارد البشرية':'e.g. HR Manager'}"></div><div class="fl"><label>${isAr?'القسم':'Department'}</label><input class="fi" id="jd-d" placeholder="${isAr?'مثال: الموارد البشرية':'e.g. Human Resources'}"></div></div>
+    <div class="fr"><div class="fl"><label>${isAr?'المستوى':'Level'}</label><select class="fs" id="jd-l">${(isAr?['مستوى مبتدئ','مستوى متوسط','مستوى متقدم','مدير','مدير إدارة','نائب رئيس']:['Entry','Mid','Senior','Manager','Director','VP']).map(v=>`<option>${v}</option>`).join('')}</select></div><div class="fl"><label>${isAr?'القطاع':'Industry'}</label><select class="fs" id="jd-i">${(isAr?['عام','رعاية صحية','مالية','تصنيع','تقنية','حكومي']:['General','Healthcare','Finance','Manufacturing','Tech','Government']).map(v=>`<option>${v}</option>`).join('')}</select></div></div>
+    <div class="fl"><label>${isAr?'محاور المسؤوليات':'Focus Areas'}</label><input class="fi" id="jd-f" placeholder="${isAr?'مثال: اكتساب المواهب، علاقات الموظفين':'e.g. talent acquisition, employee relations'}"></div>
+    <button class="btn pr" onclick="genJD()"><i class="ti ti-sparkles"></i> ${isAr?'إنشاء الوصف الوظيفي':'Generate JD'}</button>
+    <div class="out" id="jd-out"></div>
+  </div></div>
+  <div class="tg">
+    <div class="tc"><h4><i class="ti ti-list"></i> ${isAr?'مكونات الوصف الوظيفي':'JD Components'}</h4><p>${isAr?'الملخص، المسؤوليات، المؤهلات، الكفاءات، نطاق الراتب.':'Summary, Accountabilities, Qualifications, Competencies, Salary Band.'}</p><button class="btn">${isAr?'عرض النموذج':'View Template'}</button></div>
+    <div class="tc"><h4><i class="ti ti-scale"></i> ${isAr?'تقييم وتصنيف الوظائف':'Job Grading'}</h4><p>${isAr?'أطر Hay Group وMercer IPE وKorn Ferry.':'Hay Group, Mercer IPE, Korn Ferry frameworks.'}</p><button class="btn">${isAr?'فتح الإطار':'Open Framework'}</button></div>
+  </div>`;
+}
+
+/* ===================== TALENT ===================== */
+function renderTalent(){
+  const isAr=lang==='ar';
+  const tabs=isAr?['مصفوفة التسعة','خطة الخلافة','خطة التطوير الفردي']:['9-Box Grid','Succession Plan','IDP Builder'];
+  const cells=isAr?[
+    {t:'إمكانات عالية / أداء منخفض',l:'الماسة الخام',a:'التدريب المكثف والخطة الفردية ودعم الأداء.',c:''},
+    {t:'إمكانات عالية / أداء متوسط',l:'النجم الصاعد',a:'برنامج تطوير مسرّع وتعرض متقاطع.',c:''},
+    {t:'إمكانات عالية / أداء عالٍ',l:'⭐ النجم المتكامل',a:'احتفاظ ومكافأة استثنائية ومسار تنفيذي سريع.',c:'var(--gr)'},
+    {t:'إمكانات متوسطة / أداء منخفض',l:'متدني الأداء',a:'خطة تحسين الأداء (PIP) أو إعادة التوجيه.',c:'var(--rd)'},
+    {t:'إمكانات متوسطة / أداء متوسط',l:'الركيزة الأساسية',a:'تحفيز ومتابعة دورية.',c:'var(--am)'},
+    {t:'إمكانات متوسطة / أداء عالٍ',l:'المؤدي العالي',a:'توسيع النطاق ومرشح للخلافة.',c:''},
+    {t:'إمكانات منخفضة / أداء منخفض',l:'غير ملائم',a:'محادثة إنهاء وفصل بالتراضي.',c:'var(--rd)'},
+    {t:'إمكانات منخفضة / أداء متوسط',l:'المساهم الفعّال',a:'الحفاظ على الدور وتدريب موجّه.',c:''},
+    {t:'إمكانات منخفضة / أداء عالٍ',l:'المؤدي الصلب',a:'تقدير ومكافأة ومسار الخبراء.',c:''}
+  ]:[
+    {t:'HIGH POT / LOW PERF',l:'Rough Diamond',a:'Intensive coaching, IDP, performance support.',c:''},
+    {t:'HIGH POT / MED PERF',l:'Rising Star',a:'Accelerated development, cross-functional exposure.',c:''},
+    {t:'HIGH POT / HIGH PERF',l:'⭐ Star',a:'Retain, exceptional reward, fast-track.',c:'var(--gr)'},
+    {t:'MED POT / LOW PERF',l:'Under Performer',a:'PIP or reassignment.',c:'var(--rd)'},
+    {t:'MED POT / MED PERF',l:'Core Player',a:'Motivate, regular check-in.',c:'var(--am)'},
+    {t:'MED POT / HIGH PERF',l:'High Performer',a:'Broaden scope, succession candidate.',c:''},
+    {t:'LOW POT / LOW PERF',l:'Misfit',a:'Exit conversation.',c:'var(--rd)'},
+    {t:'LOW POT / MED PERF',l:'Eff. Contributor',a:'Maintain role, targeted training.',c:''},
+    {t:'LOW POT / HIGH PERF',l:'Solid Performer',a:'Reward & retain, specialist track.',c:''}
+  ];
+  const succH=isAr?['الدور الحرج','جاهز الآن','جاهز 1-2 سنة','جاهز 3-5 سنوات','المخاطرة']:['Critical Role','Ready Now','Ready 1–2 yrs','Ready 3–5 yrs','Risk'];
+  const succR=isAr?[['مدير الموارد البشرية','ليلى أ.','محمد ك.','سارة ت.','متوسط','da'],['رئيس استقطاب المواهب','—','أحمد ن.','نورة س.','مرتفع','dr'],['شريك أعمال الموارد البشرية','سارة ت.','فيصل ح.','رنا م.','منخفض','dg']]
+    :[['HR Director','Layla A.','Mohammed K.','Sara T.','Medium','da'],['Head of Talent','—','Ahmed N.','Nora S.','High','dr'],['HR Business Partner','Sara T.','Faisal H.','Rana M.','Low','dg']];
+  const tfs=isAr?['3 أشهر','6 أشهر','12 شهراً','18 شهراً']:['3 months','6 months','12 months','18 months'];
+
+  return `<div class="ph"><div class="ph-ic ic-p"><i class="ti ti-award"></i></div><div><h2>${isAr?'إدارة المواهب':'Talent Management'}</h2><p>${isAr?'مصفوفة التسعة، تخطيط الخلافة، وخطط التطوير الفردية':'9-box, succession planning, and IDP tools'}</p></div></div>
+  <div class="tabs" id="tal-tabs">${tabs.map((t,i)=>`<button class="tab${i===0?' on':''}" onclick="swTab('tal-tabs',${i},['tal0','tal1','tal2'])">${t}</button>`).join('')}</div>
+  <div id="tal0">
+    <p style="font-size:11px;color:var(--tx2);margin-bottom:8px">${isAr?'الأداء × الإمكانات. انقر على خلية لعرض الإجراءات.':'Performance × Potential. Click a cell for actions.'}</p>
+    <div style="display:grid;grid-template-columns:16px 1fr;gap:5px;align-items:center">
+      <div style="writing-mode:vertical-rl;transform:rotate(${lang==='ar'?'0':'180'}deg);font-size:9px;color:var(--tx3);text-align:center">${isAr?'الإمكانات ↑':'Potential ↑'}</div>
+      <div>
+        <div class="nb">${cells.map((c,i)=>`<div class="nbc" onclick="nbClk(${i},'${c.l}','${c.a}')"><div class="nbc-t">${c.t}</div><div class="nbc-l" style="${c.c?'color:'+c.c:''}">${c.l}</div></div>`).join('')}</div>
+        <div style="text-align:center;font-size:9px;color:var(--tx3);margin-top:4px">${isAr?'الأداء →':'Performance →'}</div>
+      </div>
+    </div>
+    <div id="nb-det" style="display:none;margin-top:10px;background:var(--bg3);border-radius:7px;padding:10px;font-size:11px;color:var(--tx2)"></div>
+  </div>
+  <div id="tal1" style="display:none"><div class="tc"><h4><i class="ti ti-sitemap"></i> ${isAr?'مصفوفة تخطيط الخلافة':'Succession Planning Matrix'}</h4>
+    <table class="sct"><thead><tr>${succH.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${succR.map(r=>`<tr>${r.slice(0,-1).map((c,i)=>i===4?`<td><span class="dot ${r[5]}"></span>${c}</td>`:`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>
+  </div></div>
+  <div id="tal2" style="display:none"><div class="tc"><h4><i class="ti ti-notebook"></i> ${isAr?'مُنشئ خطة التطوير الفردي':'IDP Builder'}</h4>
+    <div class="fl"><label>${isAr?'اسم الموظف':'Employee Name'}</label><input class="fi" placeholder=""></div>
+    <div class="fr"><div class="fl"><label>${isAr?'هدف التطوير':'Development Goal'}</label><input class="fi" placeholder=""></div>
+    <div class="fl"><label>${isAr?'الإطار الزمني':'Timeframe'}</label><select class="fs">${tfs.map(t=>`<option>${t}</option>`).join('')}</select></div></div>
+    <div class="fl"><label>${isAr?'أنشطة التعلم':'Learning Activities'}</label><textarea class="fta" placeholder="${isAr?'دورات، إرشاد، مهام تمتد...':'Courses, mentoring, stretch assignments...'}"></textarea></div>
+    <button class="btn pr">${isAr?'حفظ الخطة':'Save IDP'}</button>
+  </div></div>`;
+}
+
+/* ===================== STATIC TOOL PAGES ===================== */
+function simpleToolPage(icCls,icon,title,sub,tools){
+  return `<div class="ph"><div class="ph-ic ${icCls}"><i class="ti ${icon}"></i></div><div><h2>${title}</h2><p>${sub}</p></div></div>
+  <div class="tg">${tools.map(t=>`<div class="tc"><h4><i class="ti ${t.ic}"></i> ${t.t}</h4><p>${t.d}</p><button class="btn${t.pr?' pr':''}" onclick="${t.fn||'void(0)'}">${t.b}${t.pr?' ↗':''}</button></div>`).join('')}</div>`;
+}
+
+function renderOD(){
+  const isAr=lang==='ar';
+  const tools=isAr?[
+    {ic:'ti-refresh',t:'إدارة التغيير',d:'نموذج كوتر الثماني، ADKAR، نموذج لوين.',b:'مستشار التغيير',pr:true,fn:"goPage('change_adv')"},
+    {ic:'ti-heart',t:'تقييم الثقافة التنظيمية',d:'تشخيص ثقافة المنظمة باستخدام إطار CVF.',b:'مستشار الثقافة',pr:true,fn:"goPage('culture_adv')"},
+    {ic:'ti-tools',t:'مخطط التدخلات التنظيمية',d:'تصميم تدخلات التطوير: بناء الفريق، استشارة العمليات.',b:'فتح الإطار'},
+    {ic:'ti-stethoscope',t:'تشخيص صحة المنظمة',d:'تقييم متوافق مع McKinsey OHI.',b:'بدء التشخيص'}
+  ]:[
+    {ic:'ti-refresh',t:'Change Management',d:'Kotter 8-Step, ADKAR, Lewin\'s model.',b:'Change Advisor',pr:true,fn:"goPage('change_adv')"},
+    {ic:'ti-heart',t:'Culture Assessment',d:'Culture diagnostic using Competing Values Framework.',b:'Culture Advisor',pr:true,fn:"goPage('culture_adv')"},
+    {ic:'ti-tools',t:'OD Intervention Planner',d:'Design OD interventions: team building, process consultation.',b:'Open Framework'},
+    {ic:'ti-stethoscope',t:'Org Health Diagnostic',d:'McKinsey OHI-aligned assessment.',b:'Start Diagnostic'}
+  ];
+  const r=simpleToolPage('ic-t','ti-hierarchy',isAr?'التطوير التنظيمي':'Organizational Development',isAr?'أطر التطوير التنظيمي، إدارة التغيير والثقافة':'OD frameworks, change management, culture',tools);
+  return r+`<div class="tc"><h4><i class="ti ti-hierarchy-2"></i> ${isAr?'هيكل المنظمة':'Org Structure'}</h4>
+    <div style="padding:12px 0"><div class="org-b" style="max-width:170px;margin:0 auto">${isAr?'المدير التنفيذي للموارد البشرية':'CHRO / HR Director'}</div>
+    <div class="org-ln"></div>
+    <div class="org-rw">${(isAr?['اكتساب المواهب','شركاء الأعمال','التعلم والتطوير','التعويضات والمزايا']:['Talent Acquisition','HR Business Partners','L&D / OD','Comp & Benefits']).map(d=>`<div class="org-b">${d}</div>`).join('')}</div></div></div>`;
+}
+
+function renderAdmin(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-a','ti-clipboard-list',isAr?'الإدارة التشغيلية':'HR Administration',isAr?'العمليات التشغيلية والتوثيق والامتثال':'Operational processes, documentation, compliance',[
+    {ic:'ti-file-invoice',t:isAr?'سجلات الموظفين':'Employee Records',d:isAr?'إطار ملف الموظف: البيانات الشخصية، العقود، الحضور.':'Employee file framework: data, contracts, attendance.',b:isAr?'إدارة السجلات':'Manage Records'},
+    {ic:'ti-calendar-check',t:isAr?'إدارة الإجازات':'Leave Management',d:isAr?'الإجازة السنوية والمرضية والأمومة والحج وفق نظام العمل السعودي.':'Annual, sick, maternity, Hajj leave per Saudi Labor Law.',b:isAr?'فتح النظام':'Open System'},
+    {ic:'ti-clock',t:isAr?'الحضور والرواتب':'Attendance & Payroll',d:isAr?'تتبع الدوام والعمل الإضافي وحاسبة نهاية الخدمة.':'Time tracking, overtime, ESB calculator.',b:isAr?'مستشار الرواتب':'Payroll Advisor',pr:true,fn:"goPage('payroll_adv')"},
+    {ic:'ti-scale',t:isAr?'مرجع نظام العمل السعودي':'Saudi Labor Law',d:isAr?'الإنهاء، السعودة (نطاقات)، ساعات العمل.':'Termination, Saudization, working hours.',b:isAr?'مستشار الامتثال':'Compliance Advisor',pr:true,fn:"goPage('compliance_adv')"}
+  ]);
+}
+
+function renderPolicy(){
+  const isAr=lang==='ar';
+  const types=isAr?['قواعد السلوك المهني','التوظيف والاختيار','إدارة الأداء','الإجازات والحضور','التدريب والتطوير','التعويضات والمزايا','الإجراءات التأديبية','العمل عن بُعد']:['Code of Conduct','Recruitment & Selection','Performance Management','Leave & Attendance','Training & Development','Compensation & Benefits','Disciplinary Action','Remote Work'];
+  const sizes=isAr?['صغيرة (< 100)','متوسطة (100–500)','كبيرة (500+)']:['Small (< 100)','Medium (100–500)','Large (500+)'];
+  return `<div class="ph"><div class="ph-ic ic-t"><i class="ti ti-book"></i></div><div><h2>${isAr?'مكتبة السياسات':'Policy Library'}</h2><p>${isAr?'إنشاء ومراجعة وإدارة سياسات الموارد البشرية':'Generate, review, and manage HR policies'}</p></div></div>
+  <div class="tg one"><div class="tc">
+    <h4><i class="ti ti-sparkles"></i> AI — ${isAr?'إنشاء السياسة':'Generate Policy'}</h4>
+    <div class="fr"><div class="fl"><label>${isAr?'نوع السياسة':'Policy Type'}</label><select class="fs" id="pol-t">${types.map(t=>`<option>${t}</option>`).join('')}</select></div>
+    <div class="fl"><label>${isAr?'حجم المنظمة':'Org Size'}</label><select class="fs" id="pol-s">${sizes.map(s=>`<option>${s}</option>`).join('')}</select></div></div>
+    <button class="btn pr" onclick="genPolicy()"><i class="ti ti-sparkles"></i> ${isAr?'إنشاء السياسة':'Generate Policy'}</button>
+    <div class="out" id="pol-out"></div>
+  </div></div>`;
+}
+
+function renderPerf(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-r','ti-chart-line',isAr?'إدارة الأداء':'Performance Management',isAr?'الأطر والمؤشرات والمراجعات وأنظمة التغذية الراجعة':'Frameworks, KPIs, reviews, and feedback',[
+    {ic:'ti-target',t:isAr?'مُنشئ OKR / KPI':'OKR / KPI Builder',d:isAr?'الأهداف ونتائج المفاتيح من المستوى التنظيمي إلى الفردي.':'Cascaded Objectives & Key Results to individual level.',b:isAr?'بناء الإطار':'Build Framework'},
+    {ic:'ti-messages',t:isAr?'أداة التغذية الراجعة 360 درجة':'360° Feedback Tool',d:isAr?'تصميم استطلاعات التقييم متعدد المصادر.':'Design multi-rater feedback surveys.',b:isAr?'تصميم الاستطلاع':'Design Survey'},
+    {ic:'ti-writing',t:isAr?'نماذج مراجعة الأداء':'Performance Review Templates',d:isAr?'المتابعة نصف السنوية والمراجعة السنوية وخطة PIP.':'Mid-year, annual review, and PIP templates.',b:isAr?'عرض النماذج':'View Templates'},
+    {ic:'ti-activity',t:isAr?'نظام التغذية الراجعة المستمرة':'Continuous Feedback System',d:isAr?'التدريب الفوري والتقدير والتحسين المستمر.':'Real-time coaching, recognition, improvement.',b:isAr?'استكشاف':'Explore'}
+  ]);
+}
+
+function renderLnD(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-g','ti-school',isAr?'التعلم والتطوير':'Learning & Development',isAr?'تصميم التدريب، تحليل الاحتياجات، وأطر ATD':'Training design, needs analysis, ATD frameworks',[
+    {ic:'ti-search',t:isAr?'تحليل الاحتياجات التدريبية':'Training Needs Analysis',d:isAr?'التحليل على مستوى المنظمة والمهمة والفرد.':'Org, task, and person-level analysis.',b:isAr?'تشغيل TNA':'Run TNA'},
+    {ic:'ti-layout-board',t:isAr?'التصميم التعليمي (ADDIE)':'Instructional Design (ADDIE)',d:isAr?'تحليل → تصميم → تطوير → تنفيذ → تقييم.':'Analyze → Design → Develop → Implement → Evaluate.',b:isAr?'فتح الإطار':'Open Framework'},
+    {ic:'ti-chart-bubble',t:isAr?'قياس أثر التعلم (كيركباتريك)':'Learning Impact (Kirkpatrick)',d:isAr?'المستوى 1→2→3→4. قياس عائد الاستثمار في التدريب.':'L1→L2→L3→L4 ROI measurement.',b:isAr?'قياس الأثر':'Measure Impact'},
+    {ic:'ti-notebook',t:isAr?'خطة تطوير الموارد البشرية':'HR Development Plan',d:isAr?'بناء خطة تطوير هيكلية لوظيفة الموارد البشرية.':'Build a structured HR function development plan.',b:isAr?'بناء مع الذكاء الاصطناعي':'Build with AI',pr:true,fn:"goPage('ai_hub')"}
+  ]);
+}
+
+function renderCareer(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-b','ti-road',isAr?'المسارات المهنية':'Career Pathing',isAr?'المسارات والتنقل الوظيفي':'Career ladders, lateral moves',[
+    {ic:'ti-stairs',t:isAr?'مُنشئ السلم الوظيفي':'Career Ladder Builder',d:isAr?'مسارات الترقي الرأسي مع فجوات الكفاءات.':'Vertical progression paths with competency gaps.',b:isAr?'بناء السلم':'Build Ladder'},
+    {ic:'ti-arrows-left-right',t:isAr?'مخطط التنقل الجانبي':'Lateral Mobility Planner',d:isAr?'التنقلات الوظيفية المتقاطعة وفرص سوق المواهب.':'Cross-functional moves and internal talent marketplace.',b:isAr?'فتح المخطط':'Open Planner'}
+  ]);
+}
+
+function renderOrgM(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-t','ti-sitemap',isAr?'إدارة المنظمة':'Organizational Management',isAr?'الهيكل والتصميم والأدوار':'Structure, design, roles',[
+    {ic:'ti-layout-distribute-vertical',t:isAr?'أطر تصميم المنظمة':'Org Design Frameworks',d:isAr?'الوظيفية، الإدارات، المصفوفة، الشبكة.':'Functional, divisional, matrix, network.',b:isAr?'استكشاف':'Explore'},
+    {ic:'ti-ruler-2',t:isAr?'محلل نطاق الإشراف':'Span of Control Analyzer',d:isAr?'النطاق الأمثل بناءً على تعقيد الدور ونضج الفريق.':'Optimal spans based on complexity and maturity.',b:isAr?'تحليل':'Analyze'},
+    {ic:'ti-arrows-minimize',t:isAr?'أداة وضوح الأدوار (RACI)':'Role Clarity (RACI)',d:isAr?'مصفوفة RACI وإطار المساءلة.':'RACI matrix builder and accountability framework.',b:isAr?'بناء RACI':'Build RACI'},
+    {ic:'ti-brand-speedtest',t:isAr?'تقييم رشاقة المنظمة':'Org Agility Assessment',d:isAr?'قياس الرشاقة التنظيمية وسرعة القرار.':'Measure agility, decision speed, innovation culture.',b:isAr?'تشغيل التقييم':'Run Assessment'}
+  ]);
+}
+
+function renderStrategy(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-r','ti-target',isAr?'استراتيجية الموارد البشرية':'HR Strategy',isAr?'التخطيط الاستراتيجي وأدوات شريك الأعمال':'Strategic planning and HRBP tools',[
+    {ic:'ti-map',t:isAr?'لوحة استراتيجية الموارد البشرية':'HR Strategy Canvas',d:isAr?'ربط استراتيجية الموارد البشرية بالاستراتيجية التجارية.':'Align HR strategy to business strategy.',b:isAr?'بناء مع الذكاء الاصطناعي':'Build with AI',pr:true,fn:"goPage('ai_hub')"},
+    {ic:'ti-chess',t:isAr?'التخطيط الاستراتيجي للقوى العاملة':'Strategic Workforce Planning',d:isAr?'تحليل العرض والطلب وقرارات بناء/شراء/استعارة.':'Supply/demand analysis, build/buy/borrow decisions.',b:isAr?'فتح المخطط':'Open Planner'},
+    {ic:'ti-user-check',t:isAr?'مجموعة أدوات شريك الأعمال':'HRBP Toolkit',d:isAr?'أطر الشراكة التجارية وخرائط التأثير.':'Business partnership frameworks and influence maps.',b:isAr?'فتح المجموعة':'Open Toolkit'},
+    {ic:'ti-topology-star',t:isAr?'خريطة قدرات المنظمة':'Org Capability Map',d:isAr?'ربط القدرات التنظيمية بالأهداف الاستراتيجية.':'Map capabilities to strategic objectives.',b:isAr?'بناء الخريطة':'Build Map'}
+  ]);
+}
+
+function renderWFP(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-g','ti-graph',isAr?'تخطيط القوى العاملة':'Workforce Planning',isAr?'تحليل العرض والطلب الاستراتيجي':'Strategic supply/demand analysis',[
+    {ic:'ti-trending-up',t:isAr?'توقع الطلب على الموارد البشرية':'Demand Forecasting',d:isAr?'توقع احتياجات الاستقطاب بناءً على خطط الأعمال.':'Project headcount needs from business plans.',b:isAr?'فتح الأداة':'Open Tool'},
+    {ic:'ti-users-group',t:isAr?'تحليل العرض الداخلي':'Supply Analysis',d:isAr?'تحليل مسار التوريد الداخلي ونمذجة التسرب.':'Internal pipeline analysis and attrition modeling.',b:isAr?'تحليل العرض':'Analyze Supply'},
+    {ic:'ti-git-branch',t:isAr?'تحليل الفجوات والسيناريوهات':'Gap Analysis',d:isAr?'إطار بناء/شراء/استعارة/أتمتة مع تخطيط السيناريوهات.':'Build/buy/borrow/bot with scenario planning.',b:isAr?'تشغيل التحليل':'Run Analysis'},
+    {ic:'ti-world',t:isAr?'مخطط السعودة (نطاقات)':'Saudization Planner',d:isAr?'تتبع نسب التوطين ومحاكاة تحركات نطاقات.':'Track nationalization ratios and simulate Nitaqat.',b:isAr?'مستشار الامتثال':'Compliance Advisor',pr:true,fn:"goPage('compliance_adv')"}
+  ]);
+}
+
+function renderSci(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-t','ti-flask',isAr?'الموارد البشرية العلمية':'Scientific HR',isAr?'علم النفس الصناعي والقياسات النفسية وتحليل الوظائف':'I/O psychology, psychometrics, job analysis',[
+    {ic:'ti-brain',t:isAr?'مجموعة أدوات علم النفس الصناعي':'I/O Psychology Toolkit',d:isAr?'نظريات التحفيز وتصميم الوظائف (JCM).':'Motivation theories, job design (JCM).',b:isAr?'استكشاف':'Explore'},
+    {ic:'ti-test-pipe',t:isAr?'دليل القياسات النفسية':'Psychometric Guide',d:isAr?'Big Five، MBTI، Hogan، SHL، Korn Ferry.':'Big Five, MBTI, Hogan, SHL, Korn Ferry.',b:isAr?'عرض الدليل':'View Guide'},
+    {ic:'ti-ruler',t:isAr?'تحليل وتقييم الوظائف':'Job Analysis',d:isAr?'O*NET، أسلوب الحوادث الحرجة — مرتبط بأطر Hay وMercer.':'O*NET, critical incident technique — Hay/Mercer/KF.',b:isAr?'تشغيل التحليل':'Run Analysis'},
+    {ic:'ti-article',t:isAr?'مركز البحث في الموارد البشرية':'HR Research Hub',d:isAr?'الممارسات القائمة على الأدلة ونتائج التحليل الميتا.':'Evidence-based practices and meta-analysis findings.',b:isAr?'تصفح الأبحاث':'Browse Research'}
+  ]);
+}
+
+function renderLead(){
+  const isAr=lang==='ar';
+  return simpleToolPage('ic-p','ti-crown',isAr?'القيادة التنظيمية':'Organizational Leadership',isAr?'مسار القيادة والكفاءات والخلافة والتطوير':'Leadership pipeline, competencies, succession',[
+    {ic:'ti-stairs',t:isAr?'نموذج مسار القيادة':'Leadership Pipeline',d:isAr?'نموذج Charan وDrotter وNoel — انتقالات القيادة.':'Charan, Drotter & Noel — leadership transitions.',b:isAr?'استكشاف المسار':'Explore Pipeline'},
+    {ic:'ti-user-star',t:isAr?'محدد كفاءات القيادة':'Leadership Competency Profiler',d:isAr?'بناء أطر كفاءات قيادية مخصصة.':'Build custom leadership competency frameworks.',b:isAr?'بناء الملف':'Build Profile'},
+    {ic:'ti-messages',t:isAr?'متتبع التدريب والإرشاد':'Coaching & Mentoring Tracker',d:isAr?'تسجيل جلسات التدريب وعلاقات الإرشاد.':'Log coaching sessions, mentoring relationships.',b:isAr?'فتح المتتبع':'Open Tracker'},
+    {ic:'ti-brand-speedtest',t:isAr?'تقييم الجاهزية القيادية':'Leadership Readiness',d:isAr?'مدخلات 360 درجة وتقييم ذاتي وجاهزية الانتقال.':'360-degree input and readiness scoring.',b:isAr?'بدء التقييم':'Start Assessment'}
+  ]);
+}
+
+function renderScore(){
+  const isAr=lang==='ar';
+  const hdrs=isAr?['المنظور','الهدف','مؤشر الأداء','المستهدف','الفعلي','الحالة']:['Perspective','Objective','KPI','Target','Current','Status'];
+  const sl=isAr?{gr:'في المسار',am:'للمراقبة',dr:'في خطر'}:{gr:'On Track',am:'Monitor',dr:'At Risk'};
+  const rows=[
+    [isAr?'مالي':'Financial',isAr?'خفض تكلفة التوظيف':'Reduce cost per hire',isAr?'تكلفة التوظيف (ريال)':'Cost per hire (SAR)','3,500','3,200','gr'],
+    [isAr?'مالي':'Financial',isAr?'تحسين ميزانية الموارد البشرية':'Optimize HR budget',isAr?'نسبة التكلفة':'HR cost ratio','≤ 2%','2.1%','am'],
+    [isAr?'العملاء':'Customer',isAr?'تحسين رضا مدراء التوظيف':'Improve HM satisfaction','HM CSAT','85%','79%','am'],
+    [isAr?'العملاء':'Customer',isAr?'رفع الانخراط':'Boost engagement','eNPS','+40','+31','am'],
+    [isAr?'العمليات':'Internal',isAr?'تسريع دورة التوظيف':'Speed hiring',isAr?'وقت الشغور (يوم)':'Time to fill (days)','30','24','gr'],
+    [isAr?'العمليات':'Internal',isAr?'خفض الدوران':'Reduce turnover',isAr?'الدوران الطوعي %':'Voluntary turnover %','≤ 8%','8.4%','am'],
+    [isAr?'التعلم':'Learning',isAr?'تطوير الفريق':'Develop team',isAr?'إتمام الشهادات %':'Cert completion %','80%','65%','dr'],
+    [isAr?'التعلم':'Learning',isAr?'زيادة التدريب':'Increase training',isAr?'ساعات/موظف/سنة':'Hrs/employee/yr','40','36','am']
+  ];
+  return `<div class="ph"><div class="ph-ic ic-a"><i class="ti ti-layout-grid"></i></div><div><h2>${isAr?'بطاقة الأداء المتوازن للموارد البشرية':'HR Balanced Scorecard'}</h2><p>${isAr?'قياس أثر الموارد البشرية عبر أربع منظورات':'Measure HR impact across four perspectives'}</p></div></div>
+  <table class="sct" style="width:100%"><thead><tr>${hdrs.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+  <tbody>${rows.map(r=>`<tr>${r.slice(0,-1).map((c,i)=>i===5?`<td><span class="dot ${r[6]}"></span>${sl[r[6]]}</td>`:`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+function renderCerts(){
+  const isAr=lang==='ar';
+  const cards=[
+    {b:'HRCI',bc:'cb-b',n:'PHR / SPHR / GPHR',d:isAr?'معهد اعتماد الموارد البشرية — معرفي، من التشغيلي إلى الاستراتيجي.':'HR Certification Institute — knowledge-based, operational to strategic.',
+      doms:isAr?['إدارة الأعمال','تخطيط المواهب','التعلم والتطوير','المكافآت الإجمالية','علاقات العمل','إدارة المخاطر']:['Business Management','Talent Planning','Learning & Development','Total Rewards','Employee & Labor Relations','Risk Management'],p:65},
+    {b:'SHRM',bc:'cb-g',n:'SHRM-CP / SHRM-SCP',d:isAr?'جمعية إدارة الموارد البشرية — قائم على الكفاءات، تركيز سلوكي.':'SHRM — competency-based, behavioral focus.',
+      doms:isAr?['الخبرة في الموارد البشرية','القيادة والتوجيه','الممارسة الأخلاقية','الفهم التجاري','الاستشارة','الفاعلية الثقافية']:['HR Expertise','Leadership & Navigation','Ethical Practice','Business Acumen','Consultation','Global & Cultural Effectiveness'],p:50,pc:'var(--gr)'},
+    {b:'ATD',bc:'cb-a',n:'CPTD / APTD',d:isAr?'جمعية تطوير المواهب — نموذج كفاءات TD وتصميم التعلم.':'ATD — TD capability model and learning design.',
+      doms:isAr?['علوم التعلم','التصميم التعليمي','تقديم التدريب','تطبيق التكنولوجيا','تقييم أثر التعلم','إدارة التغيير']:['Learning Sciences','Instructional Design','Training Delivery','Technology Application','Evaluating Learning Impact','Change Management'],p:40,pc:'var(--am)'}
+  ];
+  const chev=isAr?'ti-chevron-left':'ti-chevron-right';
+  const rdy=isAr?'مستوى الجاهزية للاختبار':'Exam readiness';
+  return `<div class="ph"><div class="ph-ic ic-g"><i class="ti ti-certificate"></i></div><div><h2>${isAr?'مركز الشهادات المهنية':'Certifications Hub'}</h2><p>${isAr?'HRCI · SHRM · ATD — مجالات الاختبار والمسارات الدراسية':'Exam domains, roadmaps, and study tools'}</p></div></div>
+  <div class="cg">${cards.map(c=>`<div class="cc"><div class="cb ${c.bc}">${c.b}</div><h4>${c.n}</h4><p>${c.d}</p>
+    <ul class="dl">${c.doms.map(d=>`<li><i class="ti ${chev}"></i>${d}</li>`).join('')}</ul>
+    <div style="margin-top:7px;font-size:10px;color:var(--tx3)">${rdy}</div>
+    <div class="prb"><div class="prf" style="width:${c.p}%;${c.pc?'background:'+c.pc:''}"></div></div>
+  </div>`).join('')}</div>`;
+}
+
+/* ===================== ACTIONS ===================== */
+function swTab(tid,idx,pids){
+  document.querySelectorAll(`#${tid} .tab`).forEach((t,i)=>t.classList.toggle('on',i===idx));
+  pids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.style.display=i===idx?'block':'none';});
+}
+
+function nbClk(i,label,action){
+  const d=document.getElementById('nb-det');
+  d.style.display='block';
+  d.innerHTML=`<strong>${label}</strong> — ${action}`;
+}
+
+async function callAI(sys,usr){
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages:[{role:'user',content:usr}]})});
+  const d=await r.json();
+  return d.content?.[0]?.text||'Error';
+}
+
+async function genJD(){
+  const t=document.getElementById('jd-t')?.value||'';
+  const dep=document.getElementById('jd-d')?.value||'';
+  const lv=document.getElementById('jd-l')?.value||'';
+  const ind=document.getElementById('jd-i')?.value||'';
+  const fc=document.getElementById('jd-f')?.value||'';
+  const out=document.getElementById('jd-out');
+  const isAr=lang==='ar';
+  out.style.display='block';out.innerHTML=`<span class="thk">${isAr?'جارٍ الإنشاء...':'Generating...'}</span>`;
+  const sys=isAr?'أنت خبير موارد بشرية. أنشئ وصفاً وظيفياً احترافياً ومنظماً باللغة العربية.':'You are an HR expert. Generate a professional, structured job description.';
+  const usr=isAr?`أنشئ وصفاً وظيفياً للمسمى: ${t||'مدير الموارد البشرية'} | القسم: ${dep||'الموارد البشرية'} | المستوى: ${lv} | القطاع: ${ind} | المحاور: ${fc||'الموارد البشرية العامة'}`
+    :`Generate a JD for: ${t||'HR Manager'} | Dept: ${dep||'HR'} | Level: ${lv} | Industry: ${ind} | Focus: ${fc||'General HR'}`;
+  const res=await callAI(sys,usr);
+  out.innerHTML=res.replace(/\n/g,'<br>');
+}
+
+async function genPolicy(){
+  const t=document.getElementById('pol-t')?.value||'';
+  const s=document.getElementById('pol-s')?.value||'';
+  const out=document.getElementById('pol-out');
+  const isAr=lang==='ar';
+  out.style.display='block';out.innerHTML=`<span class="thk">${isAr?'جارٍ الإنشاء...':'Generating...'}</span>`;
+  const sys=isAr?'أنت كاتب سياسات موارد بشرية. أنشئ سياسة مهنية باللغة العربية تشمل: الهدف، النطاق، السياسة، الإجراءات، المسؤوليات.':'You are an HR policy writer. Generate a professional policy including: Purpose, Scope, Policy Statement, Procedures, Responsibilities.';
+  const usr=isAr?`اكتب سياسة "${t}" لمنظمة ${s} في المملكة العربية السعودية.`:`Write a "${t}" HR policy for a ${s} organization in Saudi Arabia.`;
+  const res=await callAI(sys,usr);
+  out.innerHTML=res.replace(/\n/g,'<br>');
+}
+
+// INIT
+renderNav();
+renderPage();
+</script>
+</body>
+</html>
