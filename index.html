@@ -1928,8 +1928,38 @@ renderPage();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
+  var swRefreshing = false;
+  // When the controlling worker changes, reload once to load fresh content.
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (swRefreshing) return;
+    swRefreshing = true;
+    window.location.reload();
+  });
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js').catch(function () {});
+    navigator.serviceWorker.register('./sw.js').then(function (reg) {
+      // Force a check for a new sw.js on every load (mobile PWAs delay this otherwise).
+      reg.update();
+      // If a worker is already waiting, activate it now.
+      if (reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
+      // Watch for a newly found worker and activate it as soon as it is installed.
+      reg.addEventListener('updatefound', function () {
+        var nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', function () {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            nw.postMessage('SKIP_WAITING');
+          }
+        });
+      });
+    }).catch(function () {});
+    // Re-check for updates whenever the app is brought back to the foreground.
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') {
+        navigator.serviceWorker.getRegistration().then(function (reg) {
+          if (reg) reg.update();
+        });
+      }
+    });
   });
 }
 </script>
