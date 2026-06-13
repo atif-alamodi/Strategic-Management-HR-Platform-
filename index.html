@@ -210,17 +210,24 @@ html[dir=ltr] .msg.a{align-self:flex-start;border-radius:9px 9px 9px 2px}
 
 
 @media(max-width:700px){
-  #sb{width:100%;min-width:0;max-width:100%}
+  /* Sidebar becomes a slide-in overlay so content always gets full width */
+  #sb{position:fixed;top:0;inset-inline-start:0;height:100vh;width:var(--sw);max-width:85vw;z-index:200;box-shadow:2px 0 16px rgba(0,0,0,.5)}
+  #sb.closed{width:0;box-shadow:none}
+  .sb-inner{width:var(--sw);max-width:85vw}
+  #main{width:100%;min-width:0}
+  #ct{padding:12px}
   .sb-top h1{font-size:13px}
-  .nav-grp-lbl{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-  .nav-item span{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px}
-  .nav-item{padding:5px 6px;gap:4px}
-  .nav-item i{font-size:13px}
-  #ct{padding:10px}
+  .ni span{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ni{padding:7px 9px;gap:8px}
+  .ni i{font-size:14px}
   .fr{grid-template-columns:1fr!important}
   .tg{grid-template-columns:1fr!important}
-  .bud-grid{grid-template-columns:1fr 1fr}
+  .mg{grid-template-columns:1fr!important}
+  .mtr{grid-template-columns:1fr 1fr!important}
+  .bud-grid{grid-template-columns:1fr!important}
   .charts-row{grid-template-columns:1fr!important}
+  #sb-ovl{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;display:none}
+  #sb-ovl.show{display:block}
 }
 @media(max-width:440px){
   .nav-item span{max-width:52px;font-size:9px}
@@ -246,6 +253,7 @@ html[dir=ltr] .msg.a{align-self:flex-start;border-radius:9px 9px 9px 2px}
   </div>
   <div id="nav"></div>
 </div></div>
+<div id="sb-ovl" onclick="toggleSB()"></div>
 
 <div id="main">
   <div id="tb">
@@ -611,6 +619,17 @@ function setLang(l){
 function toggleSB(){
   sbOpen=!sbOpen;
   document.getElementById('sb').classList.toggle('closed',!sbOpen);
+  var ovl=document.getElementById('sb-ovl');
+  if(ovl)ovl.classList.toggle('show', sbOpen && window.innerWidth<=700);
+}
+function closeSBMobile(){
+  // On mobile, navigating closes the sidebar so content is visible.
+  if(window.innerWidth<=700){
+    sbOpen=false;
+    document.getElementById('sb').classList.add('closed');
+    var ovl=document.getElementById('sb-ovl');
+    if(ovl)ovl.classList.remove('show');
+  }
 }
 
 function goPage(id){
@@ -618,6 +637,7 @@ function goPage(id){
   document.getElementById('pg-t').textContent=NAV_LABELS[lang][id]||id;
   renderNav();
   renderPage();
+  closeSBMobile();
 }
 
 /* ===================== RENDER PAGE ===================== */
@@ -1923,6 +1943,11 @@ function printAdvPDF(advKey,content){
 
 
 // INIT
+if(window.innerWidth<=700){
+  sbOpen=false;
+  var _sb=document.getElementById('sb');
+  if(_sb)_sb.classList.add('closed');
+}
 renderNav();
 renderPage();
 </script>
