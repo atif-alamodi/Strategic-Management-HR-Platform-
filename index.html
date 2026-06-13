@@ -1144,7 +1144,8 @@ function renderCerts(){
     <ul class="dl">${c.doms.map(d=>`<li><i class="ti ${chev}"></i>${d}</li>`).join('')}</ul>
     <div style="margin-top:7px;font-size:10px;color:var(--tx3)">${rdy}</div>
     <div class="prb"><div class="prf" style="width:${c.p}%;${c.pc?'background:'+c.pc:''}"></div></div>
-  </div>`).join('')}</div>`;
+  </div>`).join('')}</div>
+  <div class="dl-btns" style="margin-top:14px"><button class="pdf-btn" onclick="printGenericPDF('certs',lang==='ar'?'الشهادات والمؤهلات المهنية':'Professional Certifications')"><i class="ti ti-file-type-pdf"></i> ${isAr?'تحميل PDF':'Download PDF'}</button></div>`;
 }
 
 /* ===================== ACTIONS ===================== */
@@ -1258,12 +1259,7 @@ function printPolicyPDF(){
 // Also update genJD
 
 /* ===================== JD ENHANCEMENTS ===================== */
-function toggleJA(){
-  const p=document.getElementById('ja-panel');
-  const ic=document.getElementById('ja-icon');
-  p.classList.toggle('open');
-  if(ic)ic.className='ti '+(p.classList.contains('open')?'ti-chevron-up':'ti-chevron-down');
-}
+
 
 function printPDF(title,body,isAr){
   if(isAr===undefined)isAr=true;
