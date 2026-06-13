@@ -1,5 +1,6 @@
 /* Service Worker for the HR Strategic Management Platform (PWA) */
-const CACHE = 'hrsp-v3';
+/* v4: network-first for app shell + JS/HTML, instant skip-waiting */
+const CACHE = 'hrsp-v4';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-an-192.png', './icon-an-512.png'];
 
 self.addEventListener('install', e => {
@@ -13,6 +14,11 @@ self.addEventListener('activate', e => {
   );
 });
 
+/* Allow the page to force an immediate activation of a new worker. */
+self.addEventListener('message', e => {
+  if (e.data === 'SKIP_WAITING') self.skipWaiting();
+});
+
 self.addEventListener('fetch', e => {
   const req = e.request;
   // Never touch non-GET (AI POST calls) or cross-origin (Worker, CDNs, fonts).
@@ -20,19 +26,24 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // Navigations: network-first, fall back to cached shell when offline.
-  if (req.mode === 'navigate') {
+  const isShell = req.mode === 'navigate'
+    || url.pathname.endsWith('.html')
+    || url.pathname.endsWith('.js')
+    || url.pathname === '/' || url.pathname.endsWith('/');
+
+  if (isShell) {
+    // App shell + HTML + JS: ALWAYS network-first so fresh content wins online.
     e.respondWith(
       fetch(req).then(r => {
         const cp = r.clone();
-        caches.open(CACHE).then(c => c.put('./index.html', cp));
+        caches.open(CACHE).then(c => c.put(req, cp));
         return r;
-      }).catch(() => caches.match('./index.html'))
+      }).catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
     );
     return;
   }
 
-  // Other same-origin GET: cache-first, then network.
+  // Other same-origin GET (icons, manifest): cache-first, then network.
   e.respondWith(
     caches.match(req).then(r => r || fetch(req).then(resp => {
       const cp = resp.clone();
