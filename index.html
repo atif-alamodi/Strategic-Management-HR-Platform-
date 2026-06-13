@@ -13,6 +13,8 @@
 <link rel="icon" type="image/png" href="./icon-an-192.png">
 <title>منصة الإدارة الاستراتيجية للموارد البشرية</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -166,6 +168,60 @@ html[dir=ltr] .msg.a{align-self:flex-start;border-radius:9px 9px 9px 2px}
 .ai-card h4{font-size:12px;font-weight:700}
 .ai-card p{font-size:10px;color:var(--tx2);line-height:1.5}
 .ai-card .atag{font-size:9px;background:rgba(79,126,248,.15);color:var(--ac);border-radius:3px;padding:1px 5px;font-weight:700;display:inline-block}
+/* === MOBILE FIX === */
+@media(max-width:600px){
+  .aib{padding:5px 7px;font-size:10px}
+  .aib span{display:none}
+  .bdg{display:none}
+  #tb{padding:8px}
+  .fr{grid-template-columns:1fr}
+  .tg{grid-template-columns:1fr}
+  .mg{grid-template-columns:1fr 1fr}
+  .mtr{grid-template-columns:1fr 1fr}
+  .bud-grid{grid-template-columns:1fr}
+}
+/* === PDF / PRINT BUTTONS === */
+.dl-btns{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.pdf-btn{background:#e53e3e;color:#fff;border:none;border-radius:6px;padding:6px 13px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;transition:all .15s}
+.pdf-btn:hover{background:#c53030}
+.xls-btn{background:#22c778;color:#fff;border:none;border-radius:6px;padding:6px 13px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;transition:all .15s}
+.xls-btn:hover{background:#16a35a}
+.adv-pdf-btn{background:transparent;border:1px solid var(--brd);color:var(--tx3);border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;font-family:inherit;margin-top:5px;display:inline-flex;align-items:center;gap:3px;transition:all .15s}
+.adv-pdf-btn:hover{border-color:var(--ac);color:var(--ac)}
+/* === BUDGET UI === */
+.bud-sec{background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:14px;margin-bottom:10px}
+.bud-sec h4{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;color:var(--tx)}
+.bud-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.bud-field{display:flex;flex-direction:column;gap:4px}
+.bud-field label{font-size:10px;color:var(--tx2)}
+.bud-field input,.bud-field select{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:5px;padding:6px 8px;color:var(--tx);font-size:12px;outline:none;font-family:inherit}
+.bud-field input:focus,.bud-field select:focus{border-color:var(--ac)}
+.bud-add-row{display:flex;align-items:center;gap:7px;margin-top:6px}
+.bud-add-row input{flex:1;background:var(--bg3);border:1px solid var(--brd);border-radius:5px;padding:5px 8px;color:var(--tx);font-size:11px;font-family:inherit}
+.bud-custom-rows{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+.bud-custom-row{display:flex;align-items:center;gap:6px;font-size:11px;background:var(--bg4);border-radius:4px;padding:4px 8px}
+.bud-custom-row button{background:none;border:none;color:var(--rd);cursor:pointer;font-size:12px;padding:0}
+.bud-total-box{background:linear-gradient(135deg,rgba(79,126,248,.15),rgba(45,212,191,.1));border:1px solid var(--ac);border-radius:10px;padding:16px;text-align:center;margin:12px 0}
+.bud-total-label{font-size:11px;color:var(--tx2);margin-bottom:4px}
+.bud-total-num{font-size:32px;font-weight:700;color:var(--ac)}
+.bud-total-sub{font-size:12px;color:var(--tx3);margin-top:4px}
+.bud-breakdown{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;overflow:hidden;margin:10px 0}
+.bud-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--brd);font-size:12px}
+.bud-row:last-child{border-bottom:none}
+.bud-row.sub{color:var(--tx2);font-size:11px}
+.bud-row.total{font-weight:700;color:var(--ac);background:rgba(79,126,248,.08);border-top:1px solid var(--ac)}
+.bud-row.warn{color:var(--am)}
+.charts-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.chart-card{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:12px}
+.chart-card-title{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:8px;text-align:center}
+.chart-card canvas{width:100%!important}
+.bud-note{font-size:10px;color:var(--tx3);font-style:italic;margin-top:4px;padding-right:4px}
+/* === JOB ANALYSIS ACCORDION === */
+.ja-toggle{background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:7px 11px;width:100%;text-align:right;font-size:11px;color:var(--tx2);cursor:pointer;font-family:inherit;margin:8px 0;display:flex;align-items:center;justify-content:space-between}
+.ja-toggle:hover{border-color:var(--ac);color:var(--ac)}
+.ja-panel{display:none;padding:10px;background:var(--bg3);border:1px solid var(--brd);border-radius:0 0 6px 6px;margin-top:-1px;margin-bottom:8px}
+.ja-panel.open{display:block}
+
 </style>
 </head>
 <body>
@@ -476,7 +532,7 @@ Always use these exact legal figures when answering.`,
 
 const NAV_STRUCT=[
   {gk:'ov',items:[{k:'dashboard',ic:'ti-layout-dashboard'}]},
-  {gk:'hr',items:[{k:'jd',ic:'ti-file-description'},{k:'comp_adv',ic:'ti-coin'},{k:'recruit_adv',ic:'ti-users'},{k:'payroll_adv',ic:'ti-receipt'},{k:'admin',ic:'ti-clipboard-list'},{k:'policy',ic:'ti-book'},{k:'compliance_adv',ic:'ti-shield-check'}]},
+  {gk:'hr',items:[{k:'jd',ic:'ti-file-description'},{k:'comp_adv',ic:'ti-coin'},{k:'recruit_adv',ic:'ti-users'},{k:'payroll_adv',ic:'ti-receipt'},{k:'admin',ic:'ti-clipboard-list'},{k:'policy',ic:'ti-book'},{k:'budget',ic:'ti-calculator'},{k:'compliance_adv',ic:'ti-shield-check'}]},
   {gk:'tp',items:[{k:'talent',ic:'ti-award'},{k:'perf',ic:'ti-chart-line'},{k:'lnd',ic:'ti-school'},{k:'career',ic:'ti-road'},{k:'wellbeing_adv',ic:'ti-heart-rate-monitor'}]},
   {gk:'org',items:[{k:'od',ic:'ti-hierarchy'},{k:'orgm',ic:'ti-sitemap'},{k:'change_adv',ic:'ti-refresh'},{k:'people_adv',ic:'ti-chart-dots'},{k:'dei_adv',ic:'ti-users-group'},{k:'lead',ic:'ti-crown'},{k:'culture_adv',ic:'ti-heart'}]},
   {gk:'str',items:[{k:'strategy',ic:'ti-target'},{k:'wfp',ic:'ti-graph'},{k:'score',ic:'ti-layout-grid'},{k:'sci',ic:'ti-flask'},{k:'reporting_adv',ic:'ti-report-analytics'}]},
@@ -486,7 +542,7 @@ const NAV_STRUCT=[
 
 const NAV_LABELS={
   ar:{ov:'نظرة عامة',hr:'الموارد البشرية الأساسية',tp:'المواهب والأداء',org:'التطوير التنظيمي',str:'الموارد البشرية الاستراتيجية',ai_sec:'مستشارو الذكاء الاصطناعي',cert:'الشهادات المهنية',
-    dashboard:'لوحة التحكم',jd:'المسميات الوظيفية',comp_adv:'التعويضات والمزايا',recruit_adv:'التوظيف والاستقطاب',payroll_adv:'الرواتب والمستحقات',admin:'الإدارة التشغيلية',policy:'مكتبة السياسات',compliance_adv:'الامتثال والأنظمة',
+    dashboard:'لوحة التحكم',jd:'المسميات الوظيفية',comp_adv:'التعويضات والمزايا',recruit_adv:'التوظيف والاستقطاب',payroll_adv:'الرواتب والمستحقات',admin:'الإدارة التشغيلية',policy:'مكتبة السياسات',compliance_adv:'الامتثال والأنظمة',budget:'ميزانية الموارد البشرية',
     talent:'إدارة المواهب',perf:'إدارة الأداء',lnd:'التعلم والتطوير',career:'المسار المهني',wellbeing_adv:'رفاهية الموظفين',
     od:'التطوير التنظيمي',orgm:'إدارة المنظمة',change_adv:'إدارة التغيير',people_adv:'تحليلات الأفراد',dei_adv:'التنوع والإدماج',lead:'القيادة',culture_adv:'الثقافة والانخراط',
     strategy:'استراتيجية الموارد البشرية',wfp:'تخطيط القوى العاملة',score:'بطاقة الأداء المتوازن',sci:'الموارد البشرية العلمية',reporting_adv:'التقارير ولوحات البيانات',
@@ -494,7 +550,7 @@ const NAV_LABELS={
     certs:'HRCI / SHRM / ATD'
   },
   en:{ov:'Overview',hr:'Core HR',tp:'Talent & Performance',org:'Organizational',str:'Strategic HR',ai_sec:'AI Advisors',cert:'Certifications',
-    dashboard:'Dashboard',jd:'Job Descriptions',comp_adv:'Compensation & Benefits',recruit_adv:'Recruitment',payroll_adv:'Payroll',admin:'HR Admin',policy:'Policy Library',compliance_adv:'Compliance',
+    dashboard:'Dashboard',jd:'Job Descriptions',comp_adv:'Compensation & Benefits',recruit_adv:'Recruitment',payroll_adv:'Payroll',admin:'HR Admin',policy:'Policy Library',compliance_adv:'Compliance',budget:'HR Budget',
     talent:'Talent Management',perf:'Performance',lnd:'Learning & Development',career:'Career Pathing',wellbeing_adv:'Employee Wellbeing',
     od:'Org Development',orgm:'Org Management',change_adv:'Change Management',people_adv:'People Analytics',dei_adv:'DEI',lead:'Leadership',culture_adv:'Culture & Engagement',
     strategy:'HR Strategy',wfp:'Workforce Planning',score:'HR Scorecard',sci:'Scientific HR',reporting_adv:'Reporting & Dashboards',
@@ -562,7 +618,7 @@ function renderPage(){
   const routes={
     dashboard:renderDash,ai_hub:renderAIHub,jd:renderJD,
     talent:renderTalent,od:renderOD,score:renderScore,certs:renderCerts,
-    policy:renderPolicy,admin:renderAdmin,perf:renderPerf,
+    policy:renderPolicy,admin:renderAdmin,perf:renderPerf,budget:renderBudget,
     lnd:renderLnD,career:renderCareer,orgm:renderOrgM,
     strategy:renderStrategy,wfp:renderWFP,sci:renderSci,lead:renderLead
   };
@@ -660,7 +716,18 @@ async function sendAdvChat(advKey,hid){
         }catch{}
       }
     }
-    if(full)chatHistories[hid].push({role:'assistant',content:full});
+    if(full){
+      chatHistories[hid].push({role:'assistant',content:full});
+      const el2=document.getElementById(tid);
+      if(el2){
+        const btn=document.createElement('button');
+        btn.className='adv-pdf-btn';
+        btn.innerHTML=`<i class="ti ti-file-type-pdf"></i> PDF`;
+        const capturedFull=full;const capturedAdv=advKey;
+        btn.onclick=()=>printAdvPDF(capturedAdv,capturedFull);
+        el2.appendChild(btn);
+      }
+    }
   }catch(e){
     const el=document.getElementById(tid);
     if(el)el.innerHTML=`<div class="ml">AI</div>${lang==='ar'?'حدث خطأ، يرجى المحاولة مجدداً.':'Error, please try again.'}`;
@@ -715,14 +782,59 @@ function renderAIHub(){
 /* ===================== JD ===================== */
 function renderJD(){
   const isAr=lang==='ar';
-  return `<div class="ph"><div class="ph-ic ic-b"><i class="ti ti-file-description"></i></div><div><h2>${isAr?'مُنشئ المسميات الوظيفية':'Job Description Builder'}</h2><p>${isAr?'توليد وصف وظيفي احترافي مدعوم بالذكاء الاصطناعي':'AI-powered professional JD generation'}</p></div></div>
+  const lvls=isAr?[
+    {v:'متدرب / مساعد',h:'0-2 سنة، مشرف عليه، ينفذ المهام'},
+    {v:'أخصائي / محلل مبتدئ',h:'1-3 سنوات، يعمل باستقلالية جزئية'},
+    {v:'أخصائي / محلل متقدم',h:'3-6 سنوات، يقود مشاريع، بلا فريق مباشر'},
+    {v:'أخصائي أول / خبير',h:'6-10 سنوات، مرجعية تقنية، قد يُرشّد الآخرين'},
+    {v:'مدير / Manager',h:'يدير فريقاً مباشراً 3-15 شخصاً، تركيز تشغيلي'},
+    {v:'مدير أول / Senior Manager',h:'يدير مدراء أو فريقاً كبيراً 15-30، نطاق أوسع'},
+    {v:'مدير إدارة / Director',h:'يدير مدراء، يضع استراتيجية، مسؤولية ميزانية كبيرة'},
+    {v:'نائب رئيس / VP',h:'مسؤولية وحدة عمل أو وظيفة كاملة، تقارير للإدارة العليا'}
+  ]:[
+    {v:'Intern / Assistant',h:'0-2 yrs, supervised, task execution'},
+    {v:'Specialist / Junior Analyst',h:'1-3 yrs, partial autonomy'},
+    {v:'Senior Specialist / Analyst',h:'3-6 yrs, leads projects, no direct team'},
+    {v:'Lead / Expert',h:'6-10 yrs, technical authority, may mentor'},
+    {v:'Manager',h:'Manages 3-15 direct reports, operational focus'},
+    {v:'Senior Manager',h:'Manages managers or 15-30 staff, broader scope'},
+    {v:'Director',h:'Manages managers, sets strategy, significant budget authority'},
+    {v:'Vice President',h:'Business unit/function responsibility, reports to C-suite'}
+  ];
+  return `<div class="ph"><div class="ph-ic ic-b"><i class="ti ti-file-description"></i></div><div><h2>${isAr?'مُنشئ المسميات الوظيفية':'Job Description Builder'}</h2><p>${isAr?'توليد وصف وظيفي دقيق ومهني مدعوم بالذكاء الاصطناعي مع التمييز الصحيح بين المستويات':'AI-powered precise JD generation with correct level differentiation'}</p></div></div>
   <div class="tg one"><div class="tc">
-    <h4><i class="ti ti-sparkles"></i> ${isAr?'إنشاء الوصف الوظيفي بالذكاء الاصطناعي':'AI Job Description Generator'}</h4>
-    <div class="fr"><div class="fl"><label>${isAr?'المسمى الوظيفي':'Job Title'}</label><input class="fi" id="jd-t" placeholder="${isAr?'مثال: مدير الموارد البشرية':'e.g. HR Manager'}"></div><div class="fl"><label>${isAr?'القسم':'Department'}</label><input class="fi" id="jd-d" placeholder="${isAr?'مثال: الموارد البشرية':'e.g. Human Resources'}"></div></div>
-    <div class="fr"><div class="fl"><label>${isAr?'المستوى':'Level'}</label><select class="fs" id="jd-l">${(isAr?['مستوى مبتدئ','مستوى متوسط','مستوى متقدم','مدير','مدير إدارة','نائب رئيس']:['Entry','Mid','Senior','Manager','Director','VP']).map(v=>`<option>${v}</option>`).join('')}</select></div><div class="fl"><label>${isAr?'القطاع':'Industry'}</label><select class="fs" id="jd-i">${(isAr?['عام','رعاية صحية','مالية','تصنيع','تقنية','حكومي']:['General','Healthcare','Finance','Manufacturing','Tech','Government']).map(v=>`<option>${v}</option>`).join('')}</select></div></div>
-    <div class="fl"><label>${isAr?'محاور المسؤوليات':'Focus Areas'}</label><input class="fi" id="jd-f" placeholder="${isAr?'مثال: اكتساب المواهب، علاقات الموظفين':'e.g. talent acquisition, employee relations'}"></div>
-    <button class="btn pr" onclick="genJD()"><i class="ti ti-sparkles"></i> ${isAr?'إنشاء الوصف الوظيفي':'Generate JD'}</button>
+    <h4><i class="ti ti-sparkles"></i> ${isAr?'مولّد الوصف الوظيفي الدقيق':'Precise Job Description Generator'}</h4>
+    <div class="fr">
+      <div class="fl"><label>${isAr?'المسمى الوظيفي الدقيق':'Exact Job Title'}</label><input class="fi" id="jd-t" placeholder="${isAr?'مثال: أخصائي استقطاب مواهب أول':'e.g. Senior Talent Acquisition Specialist'}"></div>
+      <div class="fl"><label>${isAr?'القسم':'Department'}</label><input class="fi" id="jd-d" placeholder="${isAr?'مثال: الموارد البشرية':'e.g. Human Resources'}"></div>
+    </div>
+    <div class="fr">
+      <div class="fl"><label>${isAr?'المستوى الوظيفي':'Job Level'}</label>
+        <select class="fs" id="jd-l">
+          ${lvls.map(l=>`<option value="${l.v}" title="${l.h}">${l.v}</option>`).join('')}
+        </select>
+        <div id="jd-level-hint" style="font-size:10px;color:var(--ac);margin-top:3px"></div>
+      </div>
+      <div class="fl"><label>${isAr?'القطاع':'Industry'}</label>
+        <select class="fs" id="jd-i">${(isAr?['تقنية المعلومات والفنتك','رعاية صحية','مالية ومصرفية','تصنيع وصناعة','حكومي وشبه حكومي','تعليم وتدريب','بيع بالتجزئة','طاقة ونفط وغاز','اتصالات','عقارات','سفر وضيافة','عام']:['FinTech / IT','Healthcare','Finance & Banking','Manufacturing','Government','Education & Training','Retail','Energy & Oil','Telecom','Real Estate','Travel & Hospitality','General']).map(v=>`<option>${v}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="fl"><label>${isAr?'مجالات التركيز الوظيفي':'Job Focus Areas'}</label><input class="fi" id="jd-f" placeholder="${isAr?'مثال: اكتساب المواهب، علاقات الموظفين، HRIS':'e.g. talent acquisition, employee relations, HRIS'}"></div>
+    <button class="ja-toggle" onclick="toggleJA()"><span>${isAr?'تحليل الوظيفة (موصى به بقوة — يرفع دقة الوصف)':'Job Analysis (Strongly Recommended — improves accuracy)'}</span><i class="ti ti-chevron-down" id="ja-icon"></i></button>
+    <div class="ja-panel" id="ja-panel">
+      <div class="fr">
+        <div class="fl"><label>${isAr?'عدد التقارير المباشرين':'Direct Reports Count'}</label><input class="fi" id="jd-reports" type="number" min="0" placeholder="${isAr?'0 إن لم يكن مديراً':'0 if not a manager'}"></div>
+        <div class="fl"><label>${isAr?'المرفوع إليه (اللقب)':'Reports To (Title)'}</label><input class="fi" id="jd-repto" placeholder="${isAr?'مثال: مدير إدارة الموارد البشرية':'e.g. HR Director'}"></div>
+      </div>
+      <div class="fl"><label>${isAr?'النتائج الرئيسية المطلوبة':'Key Results Expected'}</label><input class="fi" id="jd-results" placeholder="${isAr?'مثال: خفض وقت التوظيف 20%، بناء سياسة أداء':'e.g. reduce time-to-hire 20%, build performance policy'}"></div>
+      <div class="fl"><label>${isAr?'القرارات التي يتخذها':'Decisions the Role Makes'}</label><input class="fi" id="jd-decisions" placeholder="${isAr?'مثال: اختيار المرشحين، الموافقة على الإجازات':'e.g. candidate selection, leave approvals'}"></div>
+      <div class="fl"><label>${isAr?'التحديات الرئيسية للدور':'Key Challenges'}</label><input class="fi" id="jd-challenges" placeholder="${isAr?'مثال: بيئة سريعة النمو، نطاق واسع مع فريق صغير':'e.g. fast-growth environment, broad scope with small team'}"></div>
+    </div>
+    <button class="btn pr" onclick="genJD()" style="margin-top:8px"><i class="ti ti-sparkles"></i> ${isAr?'إنشاء الوصف الوظيفي':'Generate JD'}</button>
     <div class="out" id="jd-out"></div>
+    <div id="jd-dl" style="display:none" class="dl-btns">
+      <button class="pdf-btn" onclick="printJDPDF()"><i class="ti ti-file-type-pdf"></i> ${isAr?'تحميل PDF':'Download PDF'}</button>
+    </div>
   </div></div>
   <div class="tg">
     <div class="tc"><h4><i class="ti ti-list"></i> ${isAr?'مكونات الوصف الوظيفي':'JD Components'}</h4><p>${isAr?'الملخص، المسؤوليات، المؤهلات، الكفاءات، نطاق الراتب.':'Summary, Accountabilities, Qualifications, Competencies, Salary Band.'}</p><button class="btn">${isAr?'عرض النموذج':'View Template'}</button></div>
@@ -971,20 +1083,111 @@ async function callAI(sys,usr){
   return d.content?.[0]?.text||'Error';
 }
 
+function toggleJA(){
+  const p=document.getElementById('ja-panel');
+  const i=document.getElementById('ja-icon');
+  p.classList.toggle('open');
+  i.className='ti '+(p.classList.contains('open')?'ti-chevron-up':'ti-chevron-down');
+}
+document.addEventListener('change',function(e){
+  if(e.target.id==='jd-l'){
+    const hints_ar=['0-2 سنة، مشرف عليه، ينفذ المهام','1-3 سنوات، يعمل باستقلالية جزئية','3-6 سنوات، يقود مشاريع، بلا فريق مباشر','6-10 سنوات، مرجعية تقنية','يدير فريقاً مباشراً 3-15 شخصاً، تركيز تشغيلي','يدير مدراء أو فريقاً كبيراً 15-30','يدير مدراء، يضع استراتيجية الإدارة','مسؤولية وحدة عمل أو وظيفة كاملة'];
+    const hints_en=['0-2 yrs, supervised, task execution','1-3 yrs, partial autonomy','3-6 yrs, leads projects, no team','6-10 yrs, technical authority','Manages 3-15 direct reports, operational','Manages managers or 15-30 staff','Manages managers, sets dept strategy','Business unit/function, C-suite reporting'];
+    const idx=e.target.selectedIndex;
+    const h=document.getElementById('jd-level-hint');
+    if(h)h.textContent=(lang==='ar'?hints_ar:hints_en)[idx]||'';
+  }
+});
 async function genJD(){
   const t=document.getElementById('jd-t')?.value||'';
   const dep=document.getElementById('jd-d')?.value||'';
   const lv=document.getElementById('jd-l')?.value||'';
   const ind=document.getElementById('jd-i')?.value||'';
   const fc=document.getElementById('jd-f')?.value||'';
+  const reports=document.getElementById('jd-reports')?.value||'';
+  const repto=document.getElementById('jd-repto')?.value||'';
+  const results=document.getElementById('jd-results')?.value||'';
+  const decisions=document.getElementById('jd-decisions')?.value||'';
+  const challenges=document.getElementById('jd-challenges')?.value||'';
   const out=document.getElementById('jd-out');
+  const dlBox=document.getElementById('jd-dl');
   const isAr=lang==='ar';
   out.style.display='block';out.innerHTML=`<span class="thk">${isAr?'جارٍ الإنشاء...':'Generating...'}</span>`;
-  const sys=isAr?'أنت خبير موارد بشرية. أنشئ وصفاً وظيفياً احترافياً ومنظماً باللغة العربية.':'You are an HR expert. Generate a professional, structured job description.';
-  const usr=isAr?`أنشئ وصفاً وظيفياً للمسمى: ${t||'مدير الموارد البشرية'} | القسم: ${dep||'الموارد البشرية'} | المستوى: ${lv} | القطاع: ${ind} | المحاور: ${fc||'الموارد البشرية العامة'}`
-    :`Generate a JD for: ${t||'HR Manager'} | Dept: ${dep||'HR'} | Level: ${lv} | Industry: ${ind} | Focus: ${fc||'General HR'}`;
+  if(dlBox)dlBox.style.display='none';
+  const levelHierarchy=`
+CRITICAL LEVEL DEFINITIONS (MUST FOLLOW EXACTLY):
+- Intern/Assistant: 0-2 yrs, fully supervised, executes assigned tasks only, no decision authority
+- Junior Specialist/Analyst: 1-3 yrs, works under guidance, handles routine tasks independently
+- Senior Specialist/Analyst: 3-6 yrs, works independently, leads projects, NO direct team management, is NOT a manager
+- Lead/Expert: 6-10 yrs, technical authority, mentors peers informally, still individual contributor
+- MANAGER: Formally manages a direct team of 3-15 people, responsible for team KPIs, approves team decisions, has operational (not strategic) budget authority. A Manager does NOT set department strategy.
+- Senior Manager: Manages multiple sub-teams or 15-30+ staff, may manage other managers, broader operational scope
+- DIRECTOR: Manages MANAGERS (not individual contributors), sets DEPARTMENT STRATEGY, owns significant budget, defines policies for the function. A Director does NOT spend most time on day-to-day operations.
+- VP: Owns an entire business function or business unit, reports to C-suite/board, P&L responsibility
+DO NOT mix these levels. A Director is fundamentally different from a Manager.`;
+  const jaContext=repto||reports||results||decisions||challenges?`
+JOB ANALYSIS DATA PROVIDED (use to make JD more precise and accurate):
+${repto?`- Reports To: ${repto}`:''}
+${reports?`- Direct Reports Count: ${reports}`:''}
+${results?`- Key Results Expected: ${results}`:''}
+${decisions?`- Decisions Made by Role: ${decisions}`:''}
+${challenges?`- Key Challenges: ${challenges}`:''}`:'
+No additional job analysis provided. Apply maximum accuracy using the level hierarchy above.';
+  const sys=isAr?
+    `أنت خبير موارد بشرية متخصص في تصميم الوظائف وكتابة الأوصاف الوظيفية الدقيقة.
+${levelHierarchy}
+
+اكتب الوصف الوظيفي باللغة العربية الفصحى ومنظماً بالأقسام التالية:
+1. ملخص الدور (3-4 أسطر)
+2. المسؤوليات والمهام الرئيسية (8-12 نقطة محددة وقابلة للقياس)
+3. المؤهلات والخبرات المطلوبة (تعليم، خبرة بالسنوات، مهارات تقنية)
+4. الكفاءات السلوكية والقيادية (5-7 كفاءات)
+5. المؤهلات التفضيلية (3-4 نقاط)
+6. نطاق الصلاحية والمسؤولية (ميزانية، فريق، قرارات)
+كن دقيقاً جداً في صياغة المسؤوليات لتعكس المستوى الوظيفي الحقيقي.`
+    :`You are an expert HR professional specializing in job design and precise job description writing.
+${levelHierarchy}
+
+Write a professional, precise JD with these sections:
+1. Role Summary (3-4 lines)
+2. Key Responsibilities & Accountabilities (8-12 specific, measurable bullets)
+3. Required Qualifications (education, years of experience, technical skills)
+4. Behavioral Competencies (5-7 competencies appropriate to level)
+5. Preferred Qualifications (3-4 points)
+6. Authority & Scope (budget, team, decision authority)
+Be precise — responsibilities must accurately reflect the actual job level.`;
+  const usr=isAr?
+    `المسمى الوظيفي: ${t||'مدير موارد بشرية'}
+القسم: ${dep||'الموارد البشرية'}
+المستوى: ${lv}
+القطاع: ${ind}
+مجالات التركيز: ${fc||'الموارد البشرية العامة'}
+${jaContext}`
+    :`Job Title: ${t||'HR Manager'}
+Department: ${dep||'Human Resources'}
+Level: ${lv}
+Industry: ${ind}
+Focus Areas: ${fc||'General HR'}
+${jaContext}`;
   const res=await callAI(sys,usr);
   out.innerHTML=res.replace(/\n/g,'<br>');
+  if(dlBox)dlBox.style.display='flex';
+  window._lastJD={title:t||'الوصف الوظيفي',dept:dep,level:lv,industry:ind,content:res};
+}
+
+function printJDPDF(){
+  if(!window._lastJD)return;
+  const d=window._lastJD;
+  const isAr=lang==='ar';
+  const body=d.content.replace(/\n/g,'<br>').replace(/^##\s*(.+)$/gm,'<h3>$1</h3>').replace(/^\*\*(.+)\*\*$/gm,'<strong>$1</strong>').replace(/^[-*]\s+(.+)$/gm,'<li>$1</li>').replace(/(<li>.+<\/li>)+/g,'<ul>$&</ul>');
+  printPDF(isAr?`الوصف الوظيفي: ${d.title}`:`Job Description: ${d.title}`,[
+    `<div style="display:flex;gap:20px;margin-bottom:12px;flex-wrap:wrap">
+      <div><span style="color:#888;font-size:11px">${isAr?'القسم':'Department'}</span><br><strong>${d.dept||'-'}</strong></div>
+      <div><span style="color:#888;font-size:11px">${isAr?'المستوى':'Level'}</span><br><strong>${d.level||'-'}</strong></div>
+      <div><span style="color:#888;font-size:11px">${isAr?'القطاع':'Industry'}</span><br><strong>${d.industry||'-'}</strong></div>
+    </div>`,
+    body
+  ].join(''),isAr);
 }
 
 async function genPolicy(){
@@ -997,6 +1200,381 @@ async function genPolicy(){
   const usr=isAr?`اكتب سياسة "${t}" لمنظمة ${s} في المملكة العربية السعودية.`:`Write a "${t}" HR policy for a ${s} organization in Saudi Arabia.`;
   const res=await callAI(sys,usr);
   out.innerHTML=res.replace(/\n/g,'<br>');
+  const isAr2=lang==='ar';
+  const dlRow=document.createElement('div');dlRow.className='dl-btns';
+  dlRow.innerHTML=`<button class="pdf-btn" onclick="window._lastPolicy={type:'${t}',scope:'${s}',content:document.getElementById('pol-out').innerText};printPolicyPDF()"><i class="ti ti-file-type-pdf"></i> ${isAr2?'تحميل PDF':'Download PDF'}</button>`;
+  out.parentNode.insertBefore(dlRow,out.nextSibling);
+  window._lastPolicy={type:t,scope:s,content:res};
+}
+
+function printPolicyPDF(){
+  if(!window._lastPolicy)return;
+  const d=window._lastPolicy;
+  const isAr=lang==='ar';
+  const body=d.content.replace(/\n/g,'<br>').replace(/^##\s*(.+)$/gm,'<h3>$1</h3>').replace(/^\*\*(.+)\*\*$/gm,'<strong>$1</strong>').replace(/^[-*]\s+(.+)$/gm,'<li>$1</li>').replace(/(<li>.+<\/li>)+/g,'<ul>$&</ul>');
+  printPDF(isAr?`سياسة: ${d.type}`:`Policy: ${d.type}`,[
+    `<div style="display:flex;gap:20px;margin-bottom:12px"><div><span style="color:#888;font-size:11px">${isAr?'النطاق':'Scope'}</span><br><strong>${d.scope||'-'}</strong></div></div>`,
+    body
+  ].join(''),isAr);
+}
+
+
+/* ===================== PRINT PDF ===================== */
+function printPDF(title,body,isAr=true){
+  const w=window.open('','_blank');
+  if(!w)return;
+  w.document.write(`<!DOCTYPE html><html dir="${isAr?'rtl':'ltr'}" lang="${isAr?'ar':'en'}"><head><meta charset="UTF-8"><title>${title}</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:${isAr?"'Cairo'":'Inter'},sans-serif;color:#1a1a2e;padding:40px;background:#fff;font-size:13px;line-height:1.8}.hdr{border-bottom:3px solid #4f7ef8;padding-bottom:16px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start}.hdr h1{color:#1a1a2e;font-size:20px;font-weight:700}.hdr-meta{font-size:11px;color:#666;text-align:${isAr?'left':'right'}}.platform{color:#4f7ef8;font-size:12px;font-weight:600;margin-top:3px}.content{color:#2d3748}h2,h3{color:#4f7ef8;font-size:15px;margin:18px 0 8px;font-weight:700;padding-${isAr?'right':'left'}:10px;border-${isAr?'right':'left'}:4px solid #4f7ef8}ul{margin:8px 0 8px 20px;padding:0}li{margin:4px 0;color:#444}strong{color:#1a1a2e}table{width:100%;border-collapse:collapse;margin:14px 0}th{background:#4f7ef8;color:#fff;padding:8px 10px;text-align:${isAr?'right':'left'};font-size:12px}td{padding:7px 10px;border-bottom:1px solid #e8ecf4;font-size:12px}.ftr{margin-top:36px;padding-top:12px;border-top:1px solid #e8ecf4;display:flex;justify-content:space-between;font-size:10px;color:#999}@media print{body{padding:20px}@page{margin:1.5cm}}</style></head><body><div class="hdr"><div><h1>${title}</h1><div class="platform">منصة الإدارة الاستراتيجية للموارد البشرية</div></div><div class="hdr-meta"><div>${new Date().toLocaleDateString(isAr?'ar-SA':'en-SA')}</div><div>رسال الود لتقنية المعلومات</div></div></div><div class="content">${body}</div><div class="ftr"><span>منصة الإدارة الاستراتيجية للموارد البشرية — رسال الود</span><span>${new Date().toLocaleDateString(isAr?'ar-SA':'en-SA')}</span></div><script>window.onload=function(){window.print();setTimeout(()=>window.close(),600)}<\/script></body></html>`);
+  w.document.close();
+}
+
+function printAdvPDF(advKey,content){
+  const adv=ADVISORS[advKey];
+  if(!adv)return;
+  const isAr=lang==='ar';
+  const d=adv[lang];
+  const body=content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+  printPDF(d.name,`<p>${body}</p>`,isAr);
+}
+
+/* ===================== BUDGET ===================== */
+let _budCustom=[];
+
+function renderBudget(){
+  const isAr=lang==='ar';
+  return `<div class="ph"><div class="ph-ic" style="background:linear-gradient(135deg,var(--ac),var(--tl));width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff"><i class="ti ti-calculator"></i></div><div><h2>${isAr?'ميزانية الموارد البشرية':'HR Budget Calculator'}</h2><p>${isAr?'احتساب التكلفة الكاملة للموظف — الراتب، البدلات، المزايا، مكافأة نهاية الخدمة، التأمينات':'Full employee cost: salary, allowances, benefits, EOSB, GOSI, insurance'}</p></div></div>
+
+  <div class="bud-sec">
+    <h4><i class="ti ti-user" style="color:var(--ac)"></i> ${isAr?'بيانات الموظف الأساسية':'Employee Information'}</h4>
+    <div class="bud-grid">
+      <div class="bud-field"><label>${isAr?'اسم الموظف (اختياري)':'Employee Name (optional)'}</label><input id="b-name" class="fi" placeholder="${isAr?'اختياري':'optional'}"></div>
+      <div class="bud-field"><label>${isAr?'الجنسية':'Nationality'}</label><select id="b-nat" onchange="budCalc()"><option value="sa">${isAr?'سعودي':'Saudi'}</option><option value="ex">${isAr?'غير سعودي (مقيم)':'Non-Saudi (Expat)'}</option></select></div>
+      <div class="bud-field"><label>${isAr?'نوع العقد':'Contract Type'}</label><select id="b-ctype" onchange="budCalc()"><option value="indef">${isAr?'غير محدد المدة':'Indefinite'}</option><option value="fixed">${isAr?'محدد المدة':'Fixed-Term'}</option></select></div>
+      <div class="bud-field"><label>${isAr?'تاريخ المباشرة':'Joining Date'}</label><input id="b-join" type="date" onchange="budCalc()" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="bud-field" id="b-endrow" style="display:none"><label>${isAr?'تاريخ انتهاء العقد':'Contract End Date'}</label><input id="b-end" type="date" onchange="budCalc()"></div>
+      <div class="bud-field"><label>${isAr?'تاريخ الاحتساب':'Calculation Date'}</label><input id="b-calc" type="date" onchange="budCalc()" value="${new Date().toISOString().slice(0,10)}"></div>
+    </div>
+  </div>
+
+  <div class="bud-sec">
+    <h4><i class="ti ti-coin" style="color:var(--am)"></i> ${isAr?'الراتب والبدلات النقدية':'Salary & Cash Allowances'}</h4>
+    <div class="bud-grid">
+      <div class="bud-field"><label>${isAr?'الراتب الأساسي (ر.س/شهر)':'Basic Salary (SAR/month)'}</label><input id="b-basic" type="number" min="0" placeholder="0" oninput="budCalc()"></div>
+      <div class="bud-field"><label>${isAr?'بدل السكن (ر.س/شهر)':'Housing Allowance (SAR/month)'}</label><input id="b-housing" type="number" min="0" placeholder="0" oninput="budCalc()"></div>
+      <div class="bud-field"><label>${isAr?'بدل المواصلات (ر.س/شهر)':'Transport Allowance (SAR/month)'}</label><input id="b-trans" type="number" min="0" placeholder="0" oninput="budCalc()"></div>
+    </div>
+    <div id="bud-custom-rows" class="bud-custom-rows"></div>
+    <div class="bud-add-row">
+      <input id="b-cname" placeholder="${isAr?'اسم البدل الإضافي':'Allowance Name'}">
+      <input id="b-camt" type="number" min="0" placeholder="${isAr?'المبلغ (ر.س)':'Amount (SAR)'}" style="max-width:120px">
+      <button class="btn" onclick="budAddCustom()">${isAr?'إضافة +':'Add +'}</button>
+    </div>
+  </div>
+
+  <div class="bud-sec">
+    <h4><i class="ti ti-gift" style="color:var(--pu)"></i> ${isAr?'المزايا العينية والتأمينية':'Benefits in Kind & Insurance'}</h4>
+    <div class="bud-grid">
+      <div class="bud-field"><label>${isAr?'بدل الاتصالات (ر.س/شهر)':'Phone Allowance (SAR/month)'}</label><input id="b-phone" type="number" min="0" placeholder="0" oninput="budCalc()"></div>
+      <div class="bud-field"><label>${isAr?'بدل السيارة/مواصفاتها (ر.س/شهر)':'Car Benefit (SAR/month)'}</label><input id="b-car" type="number" min="0" placeholder="0" oninput="budCalc()"></div>
+      <div class="bud-field"><label>${isAr?'التأمين الطبي (ر.س/سنة)':'Medical Insurance (SAR/year)'}</label><input id="b-medical" type="number" min="0" placeholder="0" oninput="budCalc()"></div>
+      <div class="bud-field" id="b-ticketrow"><label>${isAr?'تذكرة سنوية (ر.س/سنة) — غير سعودي':'Annual Ticket (SAR/year) — Expat'}</label><input id="b-ticket" type="number" min="0" placeholder="0" oninput="budCalc()"></div>
+      <div class="bud-field" id="b-iqamarow"><label>${isAr?'رسوم تجديد الإقامة (ر.س/سنة)':'Iqama Renewal (SAR/year)'}</label><input id="b-iqama" type="number" min="0" value="650" oninput="budCalc()"></div>
+      <div class="bud-field" id="b-wprow"><label>${isAr?'رسوم رخصة العمل (ر.س/سنة)':'Work Permit (SAR/year)'}</label><input id="b-wp" type="number" min="0" value="1200" oninput="budCalc()"></div>
+    </div>
+  </div>
+
+  <div class="bud-sec">
+    <h4><i class="ti ti-settings" style="color:var(--tl)"></i> ${isAr?'تكاليف إضافية ومخصصات':'Additional Costs & Provisions'}</h4>
+    <div class="bud-grid">
+      <div class="bud-field"><label>${isAr?'ميزانية التدريب (% من الراتب السنوي)':'Training Budget (% of annual salary)'}</label><input id="b-train" type="number" min="0" max="20" placeholder="2" value="2" oninput="budCalc()"></div>
+      <div class="bud-field"><label>${isAr?'مخصص المكافأة السنوية (% من الراتب السنوي)':'Annual Bonus Provision (% of annual salary)'}</label><input id="b-bonus" type="number" min="0" max="50" placeholder="0" oninput="budCalc()"></div>
+      <div class="bud-field"><label>${isAr?'تكلفة الاستقطاب (ر.س — تُوزّع على 12 شهراً)':'Recruitment Cost (SAR — spread over 12 months)'}</label><input id="b-recruit" type="number" min="0" placeholder="0" oninput="budCalc()"></div>
+    </div>
+  </div>
+
+  <div id="bud-results" style="display:none">
+    <div class="bud-total-box">
+      <div class="bud-total-label">${isAr?'إجمالي تكلفة صاحب العمل الشهرية':'Total Monthly Employer Cost'}</div>
+      <div class="bud-total-num" id="b-total-m">0</div>
+      <div class="bud-total-sub"><span id="b-total-a"></span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0">
+      <div class="bud-sec" style="margin:0">
+        <h4 style="font-size:11px;color:var(--tx2);margin-bottom:6px">${isAr?'تفاصيل التكلفة الشهرية':'Monthly Cost Breakdown'}</h4>
+        <div class="bud-breakdown" id="bud-breakdown"></div>
+      </div>
+      <div class="bud-sec" style="margin:0">
+        <h4 style="font-size:11px;color:var(--tx2);margin-bottom:6px">${isAr?'الالتزامات المستقبلية':'Future Liabilities'}</h4>
+        <div class="bud-breakdown" id="bud-liability"></div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card"><div class="chart-card-title">${isAr?'توزيع مكونات التكلفة':'Cost Composition'}</div><canvas id="chart-pie" height="160"></canvas></div>
+      <div class="chart-card"><div class="chart-card-title">${isAr?'مقارنة المكونات شهرياً':'Monthly Components'}</div><canvas id="chart-bar" height="160"></canvas></div>
+      <div class="chart-card"><div class="chart-card-title">${isAr?'تراكم مكافأة نهاية الخدمة (5 سنوات)':'EOSB Accrual (5 years)'}</div><canvas id="chart-line" height="160"></canvas></div>
+    </div>
+
+    <div class="dl-btns">
+      <button class="xls-btn" onclick="downloadBudgetExcel()"><i class="ti ti-file-type-xls"></i> ${isAr?'تحميل Excel':'Download Excel'}</button>
+      <button class="pdf-btn" onclick="printBudgetPDF()"><i class="ti ti-file-type-pdf"></i> ${isAr?'تحميل PDF':'Download PDF'}</button>
+    </div>
+  </div>`;
+}
+
+let _budCharts={pie:null,bar:null,line:null};
+
+function budAddCustom(){
+  const n=document.getElementById('b-cname')?.value?.trim();
+  const a=parseFloat(document.getElementById('b-camt')?.value)||0;
+  if(!n||!a)return;
+  _budCustom.push({name:n,amt:a});
+  document.getElementById('b-cname').value='';
+  document.getElementById('b-camt').value='';
+  renderBudCustomRows();
+  budCalc();
+}
+
+function renderBudCustomRows(){
+  const el=document.getElementById('bud-custom-rows');
+  if(!el)return;
+  el.innerHTML=_budCustom.map((r,i)=>`<div class="bud-custom-row"><span style="flex:1">${r.name}</span><span>${r.amt.toLocaleString('ar-SA')} ر.س</span><button onclick="_budCustom.splice(${i},1);renderBudCustomRows();budCalc()"><i class="ti ti-x"></i></button></div>`).join('');
+}
+
+function calcEOSB(basicSalary,joinDate,calcDate){
+  if(!joinDate||!calcDate||!basicSalary)return{total:0,months:0,years:0};
+  const j=new Date(joinDate),c=new Date(calcDate);
+  if(c<=j)return{total:0,months:0,years:0};
+  const totalMs=c-j;
+  const totalDays=totalMs/(1000*60*60*24);
+  const totalMonths=totalDays/30.4375;
+  const years=Math.floor(totalMonths/12);
+  const remMonths=totalMonths%12;
+  let eosb=0;
+  if(totalMonths<24)return{total:0,months:totalMonths,years};
+  const yrs1=Math.min(years,5);
+  const yrs2=Math.max(years-5,0);
+  const remM=remMonths/12;
+  if(years<=5){
+    eosb=(yrs1+remM)*0.5*basicSalary;
+  } else {
+    eosb=(5*0.5*basicSalary)+(yrs2+remM)*basicSalary;
+  }
+  return{total:Math.round(eosb),months:totalMonths,years};
+}
+
+function budCalc(){
+  const basic=parseFloat(document.getElementById('b-basic')?.value)||0;
+  if(!basic){document.getElementById('bud-results').style.display='none';return;}
+  const isAr=lang==='ar';
+  const nat=document.getElementById('b-nat')?.value||'sa';
+  const ctype=document.getElementById('b-ctype')?.value||'indef';
+  const joinDate=document.getElementById('b-join')?.value||'';
+  const endDate=document.getElementById('b-end')?.value||'';
+  const calcDate=document.getElementById('b-calc')?.value||new Date().toISOString().slice(0,10);
+
+  document.getElementById('b-endrow').style.display=ctype==='fixed'?'flex':'none';
+  const isEx=nat==='ex';
+  ['b-ticketrow','b-iqamarow','b-wprow'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=isEx?'block':'none';
+  });
+
+  const housing=parseFloat(document.getElementById('b-housing')?.value)||0;
+  const trans=parseFloat(document.getElementById('b-trans')?.value)||0;
+  const customTotal=_budCustom.reduce((s,r)=>s+r.amt,0);
+  const phone=parseFloat(document.getElementById('b-phone')?.value)||0;
+  const car=parseFloat(document.getElementById('b-car')?.value)||0;
+  const medAnnual=parseFloat(document.getElementById('b-medical')?.value)||0;
+  const ticketAnnual=isEx?(parseFloat(document.getElementById('b-ticket')?.value)||0):0;
+  const iqamaAnnual=isEx?(parseFloat(document.getElementById('b-iqama')?.value)||0):0;
+  const wpAnnual=isEx?(parseFloat(document.getElementById('b-wp')?.value)||0):0;
+  const trainPct=(parseFloat(document.getElementById('b-train')?.value)||2)/100;
+  const bonusPct=(parseFloat(document.getElementById('b-bonus')?.value)||0)/100;
+  const recruitOne=parseFloat(document.getElementById('b-recruit')?.value)||0;
+
+  const grossSalary=basic+housing+trans+customTotal;
+  const gosiBase=Math.min(basic+housing+trans,45000);
+  const gosiPct=isEx?0.02:0.09;
+  const gosi=Math.round(gosiBase*gosiPct);
+  const medM=Math.round(medAnnual/12);
+  const ticketM=Math.round(ticketAnnual/12);
+  const iqamaM=Math.round(iqamaAnnual/12);
+  const wpM=Math.round(wpAnnual/12);
+  const annualSalary=grossSalary*12;
+  const trainM=Math.round(annualSalary*trainPct/12);
+  const bonusM=Math.round(annualSalary*bonusPct/12);
+  const recruitM=Math.round(recruitOne/12);
+  const vacDays=5; // simplified provision (21 days / 12 months ≈ 1.75 days, 30/12=2.5)
+  const vacM=Math.round(basic/30*1.75);
+  const phoneCarM=phone+car;
+
+  const {total:eosbTotal,months:svcMonths,years:svcYears}=calcEOSB(basic,joinDate,calcDate);
+  const eosbM=svcMonths>0?Math.round(eosbTotal/Math.max(svcMonths,1)):0;
+
+  let termComp=0;
+  if(ctype==='fixed'&&endDate){
+    const now=new Date(calcDate),end=new Date(endDate);
+    const remMonths=Math.max((end-now)/(1000*60*60*24*30.4375),0);
+    termComp=Math.round(remMonths*grossSalary);
+  } else {
+    const twoMonths=grossSalary*2;
+    const oneMonth=basic;
+    const fifteenDays=Math.max(Math.round(basic/30*15*(svcYears||1)),basic*2);
+    termComp=Math.max(twoMonths,fifteenDays,oneMonth);
+  }
+
+  const monthlyTotal=grossSalary+gosi+medM+ticketM+iqamaM+wpM+phoneCarM+trainM+bonusM+recruitM+vacM+eosbM;
+  const annualTotal=monthlyTotal*12;
+
+  const fmt=n=>(n||0).toLocaleString('ar-SA');
+  document.getElementById('b-total-m').textContent=fmt(monthlyTotal)+' ر.س';
+  document.getElementById('b-total-a').textContent=(isAr?'سنوياً: ':'Annual: ')+fmt(annualTotal)+' ر.س';
+
+  const breakdown=[
+    {l:isAr?'الراتب الأساسي':'Basic Salary',v:basic,cls:''},
+    {l:isAr?'بدل السكن':'Housing',v:housing,cls:'sub'},
+    {l:isAr?'بدل المواصلات':'Transport',v:trans,cls:'sub'},
+    ..._budCustom.map(r=>({l:r.name,v:r.amt,cls:'sub'})),
+    {l:isAr?'المزايا العينية (هاتف+سيارة)':'Benefits in Kind',v:phoneCarM,cls:'sub'},
+    {l:isAr?'إجمالي الراتب الشامل':'Gross Package',v:grossSalary+phoneCarM,cls:'total'},
+    {l:isAr?`التأمينات (${isEx?'2%':'9%'} صاحب عمل)`:  `GOSI (${isEx?'2%':'9%'} employer)`,v:gosi,cls:''},
+    {l:isAr?'التأمين الطبي (شهري)':'Medical Insurance',v:medM,cls:''},
+    ...(isEx?[
+      {l:isAr?'تجديد الإقامة (شهري)':'Iqama Renewal',v:iqamaM,cls:''},
+      {l:isAr?'رخصة العمل (شهرية)':'Work Permit',v:wpM,cls:''},
+      {l:isAr?'التذكرة السنوية (شهري)':'Annual Ticket',v:ticketM,cls:''},
+    ]:[]),
+    {l:isAr?'ميزانية التدريب':'Training Budget',v:trainM,cls:''},
+    {l:isAr?'مخصص المكافأة':'Bonus Provision',v:bonusM,cls:''},
+    {l:isAr?'مخصص الإجازة':'Leave Provision',v:vacM,cls:''},
+    {l:isAr?'تكلفة الاستقطاب (موزّعة)':'Recruitment Cost',v:recruitM,cls:''},
+    {l:isAr?'مخصص مكافأة نهاية الخدمة':'EOSB Provision',v:eosbM,cls:''},
+    {l:isAr?'إجمالي تكلفة الموظف شهرياً':'Total Monthly Cost',v:monthlyTotal,cls:'total'}
+  ].filter(r=>r.v>0);
+
+  document.getElementById('bud-breakdown').innerHTML=breakdown.map(r=>`<div class="bud-row ${r.cls}"><span>${r.l}</span><span>${fmt(r.v)} ر.س</span></div>`).join('');
+
+  document.getElementById('bud-liability').innerHTML=[
+    {l:isAr?'مكافأة نهاية الخدمة المتراكمة':'EOSB Accrued',v:eosbTotal,cls:''},
+    {l:isAr?`مدة الخدمة: ${svcYears} سنة ${Math.round(svcMonths%12)} شهر`:`Service: ${svcYears}y ${Math.round(svcMonths%12)}m`,v:null,cls:'sub'},
+    {l:isAr?'تعويض الإنهاء غير المشروع (تقدير)':'Wrongful Termination Estimate',v:termComp,cls:'warn'},
+    {l:isAr?'إجمالي الالتزامات':'Total Liabilities',v:eosbTotal+termComp,cls:'total'}
+  ].map(r=>r.v!==null?`<div class="bud-row ${r.cls}"><span>${r.l}</span><span>${fmt(r.v)} ر.س</span></div>`:`<div class="bud-row ${r.cls}"><span>${r.l}</span></div>`).join('');
+
+  document.getElementById('bud-results').style.display='block';
+  setTimeout(()=>drawBudCharts(basic,housing,trans,customTotal,phoneCarM,gosi,medM+(isEx?(iqamaM+wpM+ticketM):0),trainM+bonusM+vacM+recruitM,eosbM,basic,joinDate),100);
+
+  window._lastBudget={basic,housing,trans,customTotal,gosi,medM,ticketM,iqamaM,wpM,phoneCarM,trainM,bonusM,recruitM,vacM,eosbM,monthlyTotal,annualTotal,eosbTotal,termComp,svcMonths,svcYears,isEx,breakdown,isAr,nat};
+}
+
+function drawBudCharts(basic,housing,trans,custom,kindbens,gosi,insurance,other,eosb,basicSalary,joinDate){
+  const isAr=lang==='ar';
+  const colors=['#4f7ef8','#2dd4bf','#f5a623','#f472b6','#a78bfa','#22c778','#f04e4e','#60a5fa'];
+  const labels=isAr?['أساسي','سكن','مواصلات','بدلات أخرى','مزايا عينية','تأمينات','تأمين طبي','أخرى']:['Basic','Housing','Transport','Other Allow.','Benefits in Kind','GOSI','Insurance','Other'];
+  const data=[basic,housing,trans,custom,kindbens,gosi,insurance,other].filter(v=>v>0);
+  const filteredLabels=labels.filter((_,i)=>[basic,housing,trans,custom,kindbens,gosi,insurance,other][i]>0);
+  if(_budCharts.pie)_budCharts.pie.destroy();
+  const cpie=document.getElementById('chart-pie');
+  if(cpie)_budCharts.pie=new Chart(cpie,{type:'doughnut',data:{labels:filteredLabels,datasets:[{data,backgroundColor:colors,borderWidth:2,borderColor:'#161b26'}]},options:{plugins:{legend:{position:'bottom',labels:{color:'#8b97b0',font:{size:9},boxWidth:10}}},maintainAspectRatio:false}});
+  if(_budCharts.bar)_budCharts.bar.destroy();
+  const cbar=document.getElementById('chart-bar');
+  if(cbar)_budCharts.bar=new Chart(cbar,{type:'bar',data:{labels:filteredLabels,datasets:[{label:isAr?'ر.س/شهر':'SAR/mo',data,backgroundColor:colors,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b97b0',font:{size:9}},grid:{color:'#2a3347'}},y:{ticks:{color:'#8b97b0',font:{size:9}},grid:{display:false}}},maintainAspectRatio:false}});
+  if(_budCharts.line)_budCharts.line.destroy();
+  const cline=document.getElementById('chart-line');
+  if(cline){
+    const pts=[];
+    for(let m=0;m<=60;m++){
+      const d=new Date(joinDate||new Date());
+      d.setMonth(d.getMonth()+m);
+      const r=calcEOSB(basicSalary,joinDate||new Date().toISOString().slice(0,10),d.toISOString().slice(0,10));
+      pts.push(r.total);
+    }
+    const mLabels=Array.from({length:61},(_,i)=>i%12===0?`${isAr?'س':'Y'}${i/12}`:'');
+    _budCharts.line=new Chart(cline,{type:'line',data:{labels:mLabels,datasets:[{label:isAr?'مكافأة نهاية الخدمة (ر.س)':'EOSB (SAR)',data:pts,borderColor:'#4f7ef8',backgroundColor:'rgba(79,126,248,0.15)',fill:true,tension:0.4,pointRadius:2}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b97b0',font:{size:8}},grid:{color:'#2a3347'}},y:{ticks:{color:'#8b97b0',font:{size:8},callback:v=>(v/1000).toFixed(0)+'k'},grid:{color:'#2a3347'}}},maintainAspectRatio:false}});
+  }
+}
+
+function downloadBudgetExcel(){
+  const b=window._lastBudget;
+  if(!b)return;
+  const isAr=b.isAr;
+  const fmt=n=>Math.round(n||0);
+  const wb=XLSX.utils.book_new();
+  const s1=[
+    [isAr?'ميزانية الموارد البشرية — ملخص تنفيذي':'HR Budget — Executive Summary','','',''],
+    [isAr?'تاريخ الإعداد:':'Date:',new Date().toLocaleDateString(),'',''],
+    ['','','',''],
+    [isAr?'المكوّن':'Component',isAr?'شهرياً (ر.س)':'Monthly (SAR)',isAr?'سنوياً (ر.س)':'Annual (SAR)',isAr?'النسبة %':'% of Total'],
+    [isAr?'الراتب الأساسي':'Basic Salary',fmt(b.basic),fmt(b.basic*12),((b.basic/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'بدل السكن':'Housing Allowance',fmt(b.housing),fmt(b.housing*12),((b.housing/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'بدل المواصلات':'Transport Allowance',fmt(b.trans),fmt(b.trans*12),((b.trans/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'بدلات أخرى':'Other Allowances',fmt(b.customTotal),fmt(b.customTotal*12),((b.customTotal/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'مزايا عينية':'Benefits in Kind',fmt(b.phoneCarM),fmt(b.phoneCarM*12),((b.phoneCarM/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'التأمينات الاجتماعية':'GOSI',fmt(b.gosi),fmt(b.gosi*12),((b.gosi/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'التأمين الطبي':'Medical Insurance',fmt(b.medM),fmt(b.medM*12),((b.medM/b.monthlyTotal)*100).toFixed(1)+'%'],
+    ...(b.isEx?[
+      [isAr?'تجديد الإقامة':'Iqama Renewal',fmt(b.iqamaM),fmt(b.iqamaM*12),((b.iqamaM/b.monthlyTotal)*100).toFixed(1)+'%'],
+      [isAr?'رخصة العمل':'Work Permit',fmt(b.wpM),fmt(b.wpM*12),((b.wpM/b.monthlyTotal)*100).toFixed(1)+'%'],
+      [isAr?'التذكرة السنوية':'Annual Ticket',fmt(b.ticketM),fmt(b.ticketM*12),((b.ticketM/b.monthlyTotal)*100).toFixed(1)+'%'],
+    ]:[]),
+    [isAr?'ميزانية التدريب':'Training Budget',fmt(b.trainM),fmt(b.trainM*12),((b.trainM/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'مخصص المكافأة السنوية':'Bonus Provision',fmt(b.bonusM),fmt(b.bonusM*12),((b.bonusM/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'مخصص الإجازة':'Leave Provision',fmt(b.vacM),fmt(b.vacM*12),((b.vacM/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'تكلفة الاستقطاب':'Recruitment Cost',fmt(b.recruitM),fmt(b.recruitM*12),((b.recruitM/b.monthlyTotal)*100).toFixed(1)+'%'],
+    [isAr?'مخصص مكافأة نهاية الخدمة':'EOSB Provision',fmt(b.eosbM),fmt(b.eosbM*12),((b.eosbM/b.monthlyTotal)*100).toFixed(1)+'%'],
+    ['','','',''],
+    [isAr?'إجمالي التكلفة الشهرية':'TOTAL MONTHLY COST',fmt(b.monthlyTotal),fmt(b.annualTotal),'100%'],
+    ['','','',''],
+    [isAr?'الالتزامات المستقبلية (تقديرية)':'Future Liabilities (Estimate)','','',''],
+    [isAr?'مكافأة نهاية الخدمة المتراكمة':'EOSB Accrued',fmt(b.eosbTotal),'',''],
+    [isAr?'تعويض الإنهاء غير المشروع':'Wrongful Termination Est.',fmt(b.termComp),'',''],
+    [isAr?'إجمالي الالتزامات':'Total Liabilities',fmt(b.eosbTotal+b.termComp),'','']
+  ];
+  const ws1=XLSX.utils.aoa_to_sheet(s1);
+  ws1['!cols']=[{wch:35},{wch:18},{wch:18},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws1,isAr?'ملخص الميزانية':'Budget Summary');
+
+  // EOSB projection sheet
+  const eRows=[[isAr?'السنة':'Year',isAr?'الأشهر':'Months',isAr?'مكافأة نهاية الخدمة':'EOSB (SAR)']];
+  for(let y=1;y<=10;y++){
+    const d=new Date();d.setFullYear(d.getFullYear()+y);
+    const r=calcEOSB(b.basic,document.getElementById('b-join')?.value||new Date().toISOString().slice(0,10),d.toISOString().slice(0,10));
+    eRows.push([y,y*12,fmt(r.total)]);
+  }
+  const ws2=XLSX.utils.aoa_to_sheet(eRows);
+  ws2['!cols']=[{wch:10},{wch:10},{wch:20}];
+  XLSX.utils.book_append_sheet(wb,ws2,isAr?'مشروع مكافأة نهاية الخدمة':'EOSB Projection');
+
+  XLSX.writeFile(wb,isAr?'ميزانية_الموارد_البشرية.xlsx':'HR_Budget.xlsx');
+}
+
+function printBudgetPDF(){
+  const b=window._lastBudget;
+  if(!b)return;
+  const isAr=b.isAr;
+  const fmt=n=>(Math.round(n||0)).toLocaleString(isAr?'ar-SA':'en-SA');
+  const rows=b.breakdown.map(r=>`<tr${r.cls==='total'?' style="font-weight:700;background:#f0f4ff;color:#4f7ef8"':''}${r.cls==='sub'?' style="color:#666"':''}>
+    <td>${r.l}</td><td style="text-align:${isAr?'left':'right'}">${fmt(r.v)} ر.س</td>
+    <td style="text-align:${isAr?'left':'right'}">${fmt(r.v*12)} ر.س</td></tr>`).join('');
+  const body=`
+    <table style="margin-bottom:20px">
+      <tr><th>${isAr?'المكوّن':'Component'}</th><th>${isAr?'شهرياً':'Monthly'}</th><th>${isAr?'سنوياً':'Annual'}</th></tr>
+      ${rows}
+    </table>
+    <h2>${isAr?'الالتزامات المستقبلية':'Future Liabilities'}</h2>
+    <table>
+      <tr><th>${isAr?'البند':'Item'}</th><th>${isAr?'المبلغ':'Amount'}</th></tr>
+      <tr><td>${isAr?'مكافأة نهاية الخدمة المتراكمة':'EOSB Accrued'}</td><td>${fmt(b.eosbTotal)} ر.س</td></tr>
+      <tr><td>${isAr?'تعويض الإنهاء غير المشروع (تقدير)':'Wrongful Termination Estimate'}</td><td>${fmt(b.termComp)} ر.س</td></tr>
+      <tr style="font-weight:700;background:#f0f4ff"><td>${isAr?'إجمالي الالتزامات':'Total Liabilities'}</td><td>${fmt(b.eosbTotal+b.termComp)} ر.س</td></tr>
+    </table>
+    <div style="margin-top:20px;padding:16px;background:#f0f4ff;border-radius:8px;text-align:center">
+      <div style="font-size:12px;color:#666;margin-bottom:4px">${isAr?'إجمالي التكلفة الشهرية':'Total Monthly Cost'}</div>
+      <div style="font-size:28px;font-weight:700;color:#4f7ef8">${fmt(b.monthlyTotal)} ر.س</div>
+      <div style="font-size:13px;color:#888;margin-top:4px">${isAr?'سنوياً:':'Annual:'} ${fmt(b.annualTotal)} ر.س</div>
+    </div>`;
+  printPDF(isAr?'ميزانية الموارد البشرية':'HR Budget',body,isAr);
 }
 
 // INIT
