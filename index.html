@@ -273,6 +273,51 @@ html[dir=ltr] .msg.a{align-self:flex-start;border-radius:9px 9px 9px 2px}
 const API="https://hr-strategic-proxy.atif-alamodi.workers.dev";
 let lang='ar',page='dashboard',sbOpen=true,chatHistories={};
 
+/* JD level profiles drive specialized prompts + accurate PDF charts (index 0..7 = 8 dropdown levels) */
+/* alloc = [strategic, managerial, operational, technical/IC] summing to 100 */
+const JD_LEVEL_PROFILE=[
+  {label_ar:'مساعد/متدرب',label_en:'Intern/Assistant',alloc:[0,0,35,65],span:'0',resp_count:'7-9',
+   budget_ar:'لا يملك سلطة ميزانية',budget_en:'No budget authority',
+   ar_def:'مساعد/متدرب: ينفّذ مهاماً محددة تحت إشراف مستمر، بلا تقارير مباشرة.',
+   en_def:'Intern/Assistant: executes defined tasks under continuous supervision, no direct reports.',
+   comp:[['التنفيذ والدقة',2],['التعلّم السريع',3],['التواصل',2],['إدارة الوقت',2],['العمل الجماعي',3],['الإلمام التقني',2]]},
+  {label_ar:'أخصائي/محلل',label_en:'Specialist/Analyst',alloc:[5,0,45,50],span:'0',resp_count:'8-10',
+   budget_ar:'لا يملك سلطة ميزانية مباشرة',budget_en:'No direct budget authority',
+   ar_def:'أخصائي/محلل: استقلالية جزئية، ينجز عملاً موكلاً ضمن تخصصه، بلا تقارير مباشرة.',
+   en_def:'Specialist/Analyst: partial autonomy, delivers assigned specialist work, no direct reports.',
+   comp:[['الخبرة الفنية المتخصصة',3],['التحليل وحل المشكلات',3],['الدقة والجودة',3],['التواصل',3],['المبادرة',3],['إدارة البيانات',3]]},
+  {label_ar:'أخصائي أول',label_en:'Senior Specialist',alloc:[10,5,40,45],span:'0 (يُرشد زملاء)',resp_count:'9-11',
+   budget_ar:'قد يدير ميزانية مشروع محدودة',budget_en:'May own a limited project budget',
+   ar_def:'أخصائي أول: يقود مشاريع ضمن تخصصه ويُرشد الزملاء، بلا تقارير مباشرة هرمية.',
+   en_def:'Senior Specialist: leads projects in the specialty and mentors peers, no hierarchical direct reports.',
+   comp:[['العمق الفني المتقدم',4],['قيادة المشاريع',3],['الإرشاد والتوجيه',3],['التفكير التحليلي',4],['التأثير دون سلطة',3],['اتخاذ القرار',3]]},
+  {label_ar:'خبير/قائد تقني',label_en:'Expert/Tech Lead',alloc:[20,10,30,40],span:'0-3 (تأثير عبر الفرق)',resp_count:'9-11',
+   budget_ar:'يوصي بالميزانية الفنية',budget_en:'Recommends technical budget',
+   ar_def:'خبير/قائد تقني: مرجعية فنية عليا تؤثر عبر عدة فرق، قد يقود فريقاً تقنياً صغيراً.',
+   en_def:'Expert/Tech Lead: top technical authority influencing multiple teams, may lead a small technical squad.',
+   comp:[['الخبرة المرجعية',5],['القيادة الفنية',4],['الرؤية المعمارية',4],['الإرشاد',4],['التأثير الاستراتيجي',3],['الابتكار',4]]},
+  {label_ar:'مدير (Manager)',label_en:'Manager',alloc:[20,45,30,5],span:'3-15 تقريراً مباشراً',resp_count:'10-12',
+   budget_ar:'يدير ميزانية تشغيلية للفريق',budget_en:'Owns team operational budget',
+   ar_def:'مدير (Manager): يدير 3-15 تقريراً مباشراً، يملك KPIs الفريق، تركيز تشغيلي. لا يضع استراتيجية الإدارة ولا يدير مدراء آخرين.',
+   en_def:'Manager: formally manages 3-15 direct reports, owns team KPIs, operational focus. Does NOT set department strategy nor manage other managers.',
+   comp:[['إدارة الأداء',4],['قيادة الفريق',4],['التخطيط التشغيلي',4],['التواصل والتحفيز',4],['حل النزاعات',3],['إدارة الميزانية',3],['اتخاذ القرار',4]]},
+  {label_ar:'مدير أول',label_en:'Senior Manager',alloc:[30,45,20,5],span:'15-30 أو يدير مدراء',resp_count:'10-12',
+   budget_ar:'يدير ميزانية متعددة الفرق',budget_en:'Owns multi-team budget',
+   ar_def:'مدير أول (Senior Manager): يدير 15-30 موظفاً أو يدير مدراء آخرين، نطاق تشغيلي أوسع وبعد استراتيجي متوسط.',
+   en_def:'Senior Manager: manages 15-30 staff or manages other managers, broader operational scope with moderate strategic weight.',
+   comp:[['القيادة متعددة الفرق',4],['التخطيط التكتيكي',4],['إدارة المدراء',4],['الإدارة المالية',4],['التفكير الاستراتيجي',3],['إدارة التغيير',4],['التأثير التنظيمي',4]]},
+  {label_ar:'مدير إدارة (Director)',label_en:'Director',alloc:[55,30,10,5],span:'يدير مدراء (L5/L6)',resp_count:'10-12',
+   budget_ar:'يملك ميزانية الإدارة كاملة',budget_en:'Owns full department budget',
+   ar_def:'مدير إدارة (Director): يدير مدراء، يملك استراتيجية الإدارة وميزانيتها وسياساتها. قائد استراتيجي وليس تشغيلياً، ولا يدير الأفراد مباشرة.',
+   en_def:'Director: manages managers, owns department strategy, budget and policy. A strategic leader, not operational, and does NOT manage individual contributors directly.',
+   comp:[['القيادة الاستراتيجية',5],['تطوير السياسات',4],['الإدارة المالية للإدارة',4],['بناء وتطوير المدراء',4],['التأثير التنفيذي',4],['إدارة أصحاب المصلحة',5],['إدارة التحول',4]]},
+  {label_ar:'نائب رئيس/تنفيذي',label_en:'VP/C-Level',alloc:[70,20,5,5],span:'وحدة عمل/وظيفة كاملة',resp_count:'9-11',
+   budget_ar:'مسؤولية ربح وخسارة (P&L)',budget_en:'P&L accountability',
+   ar_def:'نائب رئيس/تنفيذي: يملك وظيفة أو وحدة عمل كاملة بمسؤولية ربح وخسارة، ويرفع تقاريره للمجلس/الرئيس التنفيذي.',
+   en_def:'VP/C-Level: owns an entire function or business unit with P&L accountability, reports to board/CEO.',
+   comp:[['الرؤية التنفيذية',5],['القيادة المؤسسية',5],['الحوكمة وP&L',5],['التفكير الاستراتيجي طويل المدى',5],['التأثير على المجلس',5],['بناء الثقافة',4]]}
+];
+
 /* ===================== DATA ===================== */
 const ADVISORS={
   ai_tools:{
@@ -1189,7 +1234,9 @@ async function callAI(sys,usr){
 async function genJD(){
   var t=document.getElementById('jd-t')?.value.trim()||'';
   var dep=document.getElementById('jd-d')?.value.trim()||'';
-  var lv=document.getElementById('jd-l')?.value||'';
+  var lvSel=document.getElementById('jd-l');
+  var lv=lvSel?lvSel.value:'';
+  var lvIdx=lvSel?lvSel.selectedIndex:4;
   var ind=document.getElementById('jd-i')?.value||'';
   var fc=document.getElementById('jd-f')?.value.trim()||'';
   var repto=document.getElementById('jd-repto')?.value.trim()||'';
@@ -1199,54 +1246,98 @@ async function genJD(){
   var ch=document.getElementById('jd-ch')?.value.trim()||'';
   var out=document.getElementById('jd-out');
   var isAr=lang==='ar';
+  if(!t){out.style.display='block';out.innerHTML='<span style="color:var(--am)">'+(isAr?'⚠ اكتب المسمى الوظيفي الدقيق أولاً':'⚠ Enter the exact job title first')+'</span>';return;}
   out.style.display='block';
-  out.innerHTML='<span class="thk">'+(isAr?'جارٍ الإنشاء...':'Generating...')+'</span>';
+  out.innerHTML='<span class="thk">'+(isAr?'جارٍ إنشاء وصف وظيفي مخصّص ودقيق...':'Generating a specialized, precise JD...')+'</span>';
+
+  /* Level profile drives accuracy: index 0..7 maps to the 8 dropdown levels */
+  var LP=JD_LEVEL_PROFILE[lvIdx]||JD_LEVEL_PROFILE[4];
+
   var jaLines=[];
-  if(repto)jaLines.push((isAr?'- مرفوع إليه: ':'- Reports To: ')+repto);
-  if(rpts&&rpts!=='0')jaLines.push((isAr?'- تقارير مباشرة: ':'- Direct Reports: ')+rpts);
-  if(res_)jaLines.push((isAr?'- النتائج المتوقعة: ':'- Key Results Expected: ')+res_);
-  if(dec)jaLines.push((isAr?'- القرارات التي يتخذها: ':'- Decisions Made: ')+dec);
-  if(ch)jaLines.push((isAr?'- التحديات الرئيسية: ':'- Key Challenges: ')+ch);
-  var jaSection=jaLines.length>0?('\n\n'+(isAr?'بيانات تحليل الوظيفة — اعكسها بدقة في الوصف:':'JOB ANALYSIS DATA — reflect precisely:\n')+jaLines.join('\n')):'';
-  var hier='\n\n=== MANDATORY LEVEL RULES ===\n'
-    +'L1 Intern/Assistant: supervised, 0 direct reports, task execution only\n'
-    +'L2 Specialist/Analyst: partial autonomy, 0 direct reports, delivers work\n'
-    +'L3 Senior Specialist: leads projects, 0 direct reports, mentors peers\n'
-    +'L4 Expert/Tech Lead: technical authority, 0 hierarchical direct reports\n'
-    +'L5 MANAGER: FORMALLY MANAGES 3-15 direct reports. Owns team KPIs. OPERATIONAL FOCUS. Does NOT set department strategy. Does NOT manage other managers.\n'
-    +'L6 SENIOR MANAGER: manages 15-30 staff OR manages other managers. Broader operational scope.\n'
-    +'L7 DIRECTOR: manages MANAGERS (L5/L6). OWNS department STRATEGY, budget and POLICY. Fundamentally DIFFERENT from Manager — a Director is a strategic leader, a Manager is an operational leader.\n'
-    +'L8 VP/C-Level: owns entire function/BU. P&L accountability. Executive/board reporting.\n'
-    +'CRITICAL: The most common JD error is writing a Manager JD when a Director is selected (or vice versa). A Director does NOT manage individual contributors directly.';
+  if(repto)jaLines.push((isAr?'مرفوع إلى: ':'Reports to: ')+repto);
+  if(rpts&&rpts!=='0')jaLines.push((isAr?'عدد التقارير المباشرة الفعلي: ':'Actual direct reports: ')+rpts);
+  if(res_)jaLines.push((isAr?'نتائج رئيسية متوقعة محددة: ':'Specific key results expected: ')+res_);
+  if(dec)jaLines.push((isAr?'قرارات يملكها هذا الدور: ':'Decisions owned by this role: ')+dec);
+  if(ch)jaLines.push((isAr?'تحديات فعلية للدور: ':'Real challenges of the role: ')+ch);
+  var jaSection=jaLines.length>0?('\n\n'+(isAr?'### بيانات تحليل وظيفة فعلية — يجب دمجها حرفياً ولا تُتجاهل:\n':'### REAL JOB-ANALYSIS DATA — must be woven in literally, never ignored:\n')+jaLines.map(function(x){return '- '+x;}).join('\n')):'';
+
+  var hier='\n\n=== LEVEL DEFINITION (binding) ===\n'+(isAr?LP.ar_def:LP.en_def)
+    +'\n- '+(isAr?'توزيع الجهد المطلوب: استراتيجي ':'Effort split: strategic ')+LP.alloc[0]+'%, '+(isAr?'إداري ':'managerial ')+LP.alloc[1]+'%, '+(isAr?'تشغيلي ':'operational ')+LP.alloc[2]+'%, '+(isAr?'تقني/تنفيذي ':'technical/IC ')+LP.alloc[3]+'%'
+    +'\n- '+(isAr?'نطاق الإشراف النموذجي: ':'Typical span of control: ')+LP.span
+    +'\n- '+(isAr?'سلطة الميزانية: ':'Budget authority: ')+(isAr?LP.budget_ar:LP.budget_en)
+    +'\nCRITICAL: الخطأ الأكثر شيوعاً هو خلط Manager (قائد تشغيلي يدير أفراداً) مع Director (قائد استراتيجي يدير مدراء). التزم بالتعريف أعلاه حرفياً.';
+
+  /* Saudi-market grounding so output is not generic-global */
+  var ksa=isAr?
+    ('\n\n=== سياق السوق السعودي (إلزامي الإشارة له حيث يناسب) ===\n'
+    +'- اربط متطلبات الدور بنظام العمل السعودي (م/44) حيث ينطبق.\n'
+    +'- إن كان الدور في الموارد البشرية أو الإدارة: أشر صراحةً للسعودة/نطاقات، قوى، مدد، التأمينات الاجتماعية (GOSI)، وحماية الأجور (WPS) حسب الصلة.\n'
+    +'- استخدم مسميات ومهارات سوق العمل السعودي/الخليجي الفعلية، لا قوالب عامة.')
+    :('\n\n=== SAUDI MARKET CONTEXT (reference where relevant) ===\n'
+    +'- Tie role requirements to Saudi Labor Law (Royal Decree M/44) where applicable.\n'
+    +'- If the role is in HR/admin: explicitly reference Saudization/Nitaqat, Qiwa, Mudad, GOSI, and WPS where relevant.\n'
+    +'- Use real Saudi/Gulf labor-market titles and skills, not generic global boilerplate.');
+
+  var antiGeneric=isAr?
+    ('\n\n=== قواعد ضد العمومية (إلزامية) ===\n'
+    +'1. ممنوع منعاً باتاً العبارات الحشوية مثل "إنجاز المهام الموكلة" أو "التعاون مع الفريق" أو "مهارات تواصل ممتازة" دون تخصيص.\n'
+    +'2. كل مسؤولية يجب أن تبدأ بفعل قوي + ناتج محدد + مقياس كمي (نسبة/رقم/مدة) متى أمكن.\n'
+    +'3. اربط المسؤوليات والكفاءات بـ"'+(t||'الدور')+'" و قطاع "'+ind+'" تحديداً، لا بوظيفة عامة.\n'
+    +'4. المؤهلات يجب أن تذكر سنوات خبرة دقيقة + شهادات مهنية حقيقية مرتبطة بالتخصص (مثل PHRi/SHRM للموارد البشرية، PMP لإدارة المشاريع، CFA/CMA للمالية... اختر المناسب للدور).\n'
+    +'5. اكتب نطاق راتب شهري تقديري بالريال السعودي مناسب للمستوى والقطاع في السوق السعودي.')
+    :('\n\n=== ANTI-GENERIC RULES (mandatory) ===\n'
+    +'1. Absolutely forbid filler like "complete assigned tasks", "collaborate with the team", "excellent communication skills" without specifics.\n'
+    +'2. Every responsibility must start with a strong verb + concrete deliverable + a quantified metric (%/number/timeframe) where possible.\n'
+    +'3. Tie responsibilities and competencies specifically to "'+(t||'the role')+'" and the "'+ind+'" sector, not a generic job.\n'
+    +'4. Qualifications must give exact years of experience + real professional certifications relevant to the specialty (e.g. PHRi/SHRM for HR, PMP for PM, CFA/CMA for finance, pick what fits).\n'
+    +'5. Include an estimated monthly salary band in SAR appropriate to the level and sector in the Saudi market.');
+
   var sys=isAr?
-    ('أنت خبير موارد بشرية متخصص في تصميم الوظائف وكتابة الأوصاف الوظيفية الدقيقة.'+hier
-    +'\nاكتب الوصف الوظيفي باللغة العربية الفصحى وفق الأقسام:\n'
-    +'1. ملخص الدور (3-4 أسطر تعكس المستوى بدقة)\n'
-    +'2. المسؤوليات الرئيسية (8-12 نقطة محددة قابلة للقياس، ملائمة للمستوى المحدد)\n'
-    +'3. المؤهلات المطلوبة (التعليم، سنوات الخبرة، الشهادات المهنية)\n'
-    +'4. الكفاءات السلوكية (5-7 كفاءات مناسبة للمستوى)\n'
-    +'5. نطاق الصلاحية (حجم الفريق، الميزانية، صلاحيات القرار)')
-    :('You are an expert HR professional specializing in precise job architecture.'+hier
-    +'\nWrite a complete professional JD with sections:\n'
-    +'1. Role Summary (3-4 lines accurately reflecting the level)\n'
-    +'2. Key Responsibilities (8-12 specific, measurable bullets appropriate to level)\n'
-    +'3. Required Qualifications (education, years of experience, professional certifications)\n'
-    +'4. Behavioral Competencies (5-7 competencies appropriate to level)\n'
-    +'5. Authority & Scope (team size, budget, decision rights)');
+    ('أنت خبير أول في تصميم الوظائف (Job Architecture) وكتابة الأوصاف الوظيفية للسوق السعودي والخليجي. تكتب أوصافاً دقيقة ومخصصة لكل دور ومستوى وقطاع، خالية تماماً من العمومية.'
+    +hier+ksa+antiGeneric
+    +'\n\n=== هيكل المخرجات (التزم به حرفياً وبالعناوين نفسها) ===\n'
+    +'1. ملخص الدور (3-4 أسطر تعكس المستوى '+(isAr?LP.label_ar:LP.label_en)+' بدقة)\n'
+    +'2. المسؤوليات الرئيسية ('+LP.resp_count+' نقطة محددة وقابلة للقياس ومخصصة للدور)\n'
+    +'3. مؤشرات الأداء الرئيسية (KPIs) (4-6 مؤشرات كمية يُقاس بها نجاح الدور)\n'
+    +'4. المؤهلات المطلوبة (تعليم + سنوات خبرة دقيقة + شهادات مهنية محددة)\n'
+    +'5. الكفاءات الجوهرية (6-8 كفاءات مع مستوى الإتقان المطلوب لكل منها: أساسي/متقدم/خبير)\n'
+    +'6. نطاق الصلاحية والراتب (حجم الفريق، الميزانية، صلاحيات القرار، ونطاق الراتب الشهري بالريال السعودي)')
+    :('You are a senior Job Architecture expert writing precise, specialized job descriptions for the Saudi/Gulf market. You never produce generic boilerplate.'
+    +hier+ksa+antiGeneric
+    +'\n\n=== OUTPUT STRUCTURE (follow exactly, same headings) ===\n'
+    +'1. Role Summary (3-4 lines accurately reflecting the '+LP.label_en+' level)\n'
+    +'2. Key Responsibilities ('+LP.resp_count+' specific, measurable, role-tailored bullets)\n'
+    +'3. Key Performance Indicators (KPIs) (4-6 quantified measures of success)\n'
+    +'4. Required Qualifications (education + exact years + specific professional certifications)\n'
+    +'5. Core Competencies (6-8, each with required proficiency: Foundational/Advanced/Expert)\n'
+    +'6. Authority & Salary Scope (team size, budget, decision rights, monthly SAR salary band)');
+
   var usr=isAr?
-    ('المسمى الوظيفي: '+(t||'مدير')
-    +'\nالقسم: '+(dep||'الموارد البشرية')
-    +'\nالمستوى المحدد: '+lv
-    +'\nالقطاع: '+ind
-    +'\nمحاور التركيز: '+(fc||'عام')+jaSection)
-    :('Job Title: '+(t||'Manager')
-    +'\nDepartment: '+(dep||'HR')
-    +'\nSelected Level: '+lv
-    +'\nIndustry: '+ind
-    +'\nFocus Areas: '+(fc||'General HR')+jaSection);
-  var res=await callAI(sys,usr);
+    ('اكتب وصفاً وظيفياً كاملاً ومخصصاً لهذا الدور تحديداً:\n'
+    +'- المسمى الوظيفي: '+t+'\n'
+    +'- القسم: '+(dep||'-')+'\n'
+    +'- المستوى المحدد: '+lv+'\n'
+    +'- القطاع: '+ind+'\n'
+    +'- محاور التركيز: '+(fc||(isAr?'استنتجها من المسمى':'infer from title'))+jaSection
+    +'\n\nاكتب بعربية فصحى احترافية. لا مقدمات ولا خاتمة، ابدأ مباشرة بالقسم 1.')
+    :('Write a complete, specialized JD for THIS specific role:\n'
+    +'- Job Title: '+t+'\n'
+    +'- Department: '+(dep||'-')+'\n'
+    +'- Selected Level: '+lv+'\n'
+    +'- Industry: '+ind+'\n'
+    +'- Focus Areas: '+(fc||'infer from the title')+jaSection
+    +'\n\nNo preamble, no closing remarks. Start directly at section 1.');
+
+  /* Dedicated higher-token call so the JD is not truncated (global callAI caps at 1000) */
+  var res;
+  try{
+    var r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2200,system:sys,messages:[{role:'user',content:usr}]})});
+    var d=await r.json();
+    res=d.content&&d.content[0]&&d.content[0].text?d.content[0].text:(isAr?'تعذّر الإنشاء، حاول مجدداً':'Generation failed, try again');
+  }catch(e){res=(isAr?'خطأ في الاتصال: ':'Connection error: ')+e.message;}
+
   out.innerHTML=res.replace(/\n/g,'<br>');
-  window._lastJD={title:(t||lv),dept:dep,level:lv,industry:ind,focus:fc,content:res};
+  window._lastJD={title:(t||lv),dept:dep,level:lv,levelIdx:lvIdx,industry:ind,focus:fc,reportsTo:repto,reports:rpts,content:res};
   var dl=document.getElementById('jd-dl');
   if(dl)dl.style.display='flex';
 }
@@ -1693,16 +1784,65 @@ function printBudgetPDF(){
 
 /* ─── printJDPDF ───────────────────────────────────────── */
 function printJDPDF(){
-  var d=window._lastJD;if(!d)return;
+  var d=window._lastJD;if(!d){alert(lang==='ar'?'أنشئ وصفاً وظيفياً أولاً':'Generate a JD first');return;}
   var isAr=lang==='ar';
+  var LP=JD_LEVEL_PROFILE[(typeof d.levelIdx==='number'?d.levelIdx:4)]||JD_LEVEL_PROFILE[4];
   var body=d.content.replace(/\n/g,'<br>');
+
   var meta='<div style="display:flex;gap:20px;margin-bottom:14px;flex-wrap:wrap;background:#f8faff;padding:10px;border-radius:6px">'
     +'<div><span style="font-size:10px;color:#888">'+(isAr?'القسم':'Department')+'</span><br><strong>'+(d.dept||'-')+'</strong></div>'
-    +'<div><span style="font-size:10px;color:#888">'+(isAr?'المستوى':'Level')+'</span><br><strong>'+(d.level||'-')+'</strong></div>'
+    +'<div><span style="font-size:10px;color:#888">'+(isAr?'المستوى':'Level')+'</span><br><strong>'+(isAr?LP.label_ar:LP.label_en)+'</strong></div>'
     +'<div><span style="font-size:10px;color:#888">'+(isAr?'القطاع':'Industry')+'</span><br><strong>'+(d.industry||'-')+'</strong></div>'
+    +(d.reportsTo?'<div><span style="font-size:10px;color:#888">'+(isAr?'مرفوع إلى':'Reports To')+'</span><br><strong>'+d.reportsTo+'</strong></div>':'')
     +(d.focus?'<div><span style="font-size:10px;color:#888">'+(isAr?'محاور التركيز':'Focus')+'</span><br><strong>'+d.focus+'</strong></div>':'')
     +'</div>';
-  printPDF(isAr?'الوصف الوظيفي: '+d.title:'Job Description: '+d.title, meta+body, isAr);
+
+  /* CHART 1 — Time allocation horizontal bars (level-derived) */
+  var allocLabels=isAr?['استراتيجي','إداري/قيادي','تشغيلي','تقني/تنفيذي']:['Strategic','Managerial','Operational','Technical/IC'];
+  var allocCols=['#4f7ef8','#a78bfa','#f5a623','#2dd4bf'];
+  var c1='<svg width="300" height="150" viewBox="0 0 300 150">';
+  LP.alloc.forEach(function(v,i){
+    var y=8+i*35, w=Math.round(v*1.75);
+    c1+='<text x="0" y="'+(y+13)+'" font-size="10" fill="#444">'+allocLabels[i]+'</text>';
+    c1+='<rect x="92" y="'+y+'" width="175" height="18" rx="3" fill="#eef2fb"/>';
+    c1+='<rect x="92" y="'+y+'" width="'+w+'" height="18" rx="3" fill="'+allocCols[i]+'"/>';
+    c1+='<text x="272" y="'+(y+13)+'" font-size="10" font-weight="700" fill="'+allocCols[i]+'">'+v+'%</text>';
+  });
+  c1+='</svg>';
+
+  /* CHART 2 — Competency proficiency bars (1..5), level-derived */
+  var comp=LP.comp;
+  var ch=comp.length*26+16;
+  var lvlTxt=isAr?['','أساسي','متوسط','متقدم','خبير','مرجعي']:['','Basic','Inter.','Advanced','Expert','Master'];
+  var c2='<svg width="320" height="'+ch+'" viewBox="0 0 320 '+ch+'">';
+  comp.forEach(function(c,i){
+    var y=8+i*26, pct=c[1]/5, w=Math.round(pct*150);
+    var col=c[1]>=5?'#7c3aed':c[1]>=4?'#4f7ef8':c[1]>=3?'#2dd4bf':'#f5a623';
+    c2+='<text x="0" y="'+(y+12)+'" font-size="9.5" fill="#444">'+c[0]+'</text>';
+    c2+='<rect x="150" y="'+y+'" width="150" height="16" rx="3" fill="#eef2fb"/>';
+    c2+='<rect x="150" y="'+y+'" width="'+w+'" height="16" rx="3" fill="'+col+'"/>';
+    c2+='<text x="305" y="'+(y+12)+'" font-size="8.5" font-weight="700" fill="'+col+'" text-anchor="end">'+lvlTxt[c[1]]+'</text>';
+  });
+  c2+='</svg>';
+
+  /* CHART 3 — Authority/scope profile cards */
+  var c3='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">'
+    +'<div style="background:#eef2fb;border-radius:8px;padding:10px"><div style="font-size:9px;color:#888">'+(isAr?'نطاق الإشراف':'Span of Control')+'</div><div style="font-size:13px;font-weight:700;color:#4f7ef8;margin-top:4px">'+LP.span+'</div></div>'
+    +'<div style="background:#f3effe;border-radius:8px;padding:10px"><div style="font-size:9px;color:#888">'+(isAr?'سلطة الميزانية':'Budget Authority')+'</div><div style="font-size:11px;font-weight:700;color:#7c3aed;margin-top:4px">'+(isAr?LP.budget_ar:LP.budget_en)+'</div></div>'
+    +'<div style="background:#e9fbf4;border-radius:8px;padding:10px"><div style="font-size:9px;color:#888">'+(isAr?'الوزن الاستراتيجي':'Strategic Weight')+'</div><div style="font-size:13px;font-weight:700;color:#2dd4bf;margin-top:4px">'+LP.alloc[0]+'%</div></div>'
+    +'</div>';
+
+  var charts='<div style="margin:18px 0;padding:14px;border:1px solid #e4e9f2;border-radius:10px;background:#fcfdff">'
+    +'<h3 style="font-size:13px;color:#2d3748;margin:0 0 10px 0;border-bottom:2px solid #4f7ef8;padding-bottom:6px">'+(isAr?'الملف التحليلي للدور (مشتق من المستوى الوظيفي)':'Role Analytical Profile (derived from job level)')+'</h3>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">'
+    +'<div><div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px">'+(isAr?'توزيع الجهد المتوقع':'Expected Effort Allocation')+'</div>'+c1+'</div>'
+    +'<div><div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px">'+(isAr?'مستوى إتقان الكفاءات المطلوب':'Required Competency Proficiency')+'</div>'+c2+'</div>'
+    +'</div>'
+    +'<div style="margin-top:14px">'+c3+'</div>'
+    +'<p style="font-size:8.5px;color:#aab;margin-top:8px">'+(isAr?'الرسوم مشتقة من معايير تصميم الوظائف للمستوى المحدد، وقد تُعدّل حسب سياق المنشأة.':'Charts derived from job-architecture norms for the selected level; adjust to your org context.')+'</p>'
+    +'</div>';
+
+  printPDF(isAr?'الوصف الوظيفي: '+d.title:'Job Description: '+d.title, meta+charts+body, isAr);
 }
 
 /* ─── printPolicyPDF ───────────────────────────────────── */
