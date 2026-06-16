@@ -226,6 +226,8 @@ html[dir=ltr] .msg.a{align-self:flex-start;border-radius:9px 9px 9px 2px}
   .mtr{grid-template-columns:1fr 1fr!important}
   .bud-grid{grid-template-columns:1fr!important}
   .charts-row{grid-template-columns:1fr!important}
+  .tak-grid{grid-template-columns:1fr!important}
+  .tak-title{font-size:14px;padding:8px 18px}
   #sb-ovl{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;display:none}
   #sb-ovl.show{display:block}
 }
@@ -239,6 +241,20 @@ html[dir=ltr] .msg.a{align-self:flex-start;border-radius:9px 9px 9px 2px}
 .pdf-btn:hover{background:#c53030}
 .xls-btn{background:#1a7a4a;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;transition:all .15s;font-weight:600}
 .xls-btn:hover{background:#145c37}
+
+/* === Talent Acquisition KPI reference panel (tak) === */
+.tak-panel{background:linear-gradient(180deg,#1a2336 0%,#141b2b 100%);border:1px solid #2c3852;border-radius:16px;padding:22px 20px 24px;margin-bottom:18px;box-shadow:0 8px 28px rgba(0,0,0,.28)}
+.tak-head{display:flex;justify-content:center;margin-bottom:6px}
+.tak-title{background:#fff;color:#16223a;font-size:16px;font-weight:800;padding:9px 26px;border-radius:30px;box-shadow:0 4px 14px rgba(0,0,0,.22);letter-spacing:.2px}
+.tak-sub{text-align:center;color:#9fb0cc;font-size:12px;margin:8px auto 18px;max-width:620px;line-height:1.7}
+.tak-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tak-card{background:linear-gradient(180deg,#fbfcfe 0%,#eef2f9 100%);border:1px solid #e1e8f3;border-radius:13px;padding:15px 14px 16px;display:flex;flex-direction:column;gap:9px;box-shadow:0 3px 10px rgba(10,20,40,.10);transition:transform .15s,box-shadow .15s}
+.tak-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(20,40,80,.16)}
+.tak-ct{text-align:center;font-size:15px;font-weight:800;color:#16223a;margin-bottom:2px}
+.tak-lbl{text-align:center;font-size:11px;font-weight:700;color:#8a96ad}
+.tak-box{background:#fff;border:1px solid #dde5f1;border-radius:9px;padding:9px 10px;text-align:center;font-size:12.5px;font-weight:700;color:#2a3b58;line-height:1.6}
+.tak-ex{background:#f4f8ff;border:1px solid #d6e3f7}
+.tak-ex b{color:#2563c9}
 </style>
 </head>
 <body>
@@ -701,6 +717,43 @@ function renderPage(){
 }
 
 /* ===================== ADVISOR RENDERER ===================== */
+function renderRecruitKPIs(){
+  var isAr=lang==='ar';
+  var title=isAr?'مؤشرات استقطاب المواهب':'Talent Acquisition KPIs';
+  var sub=isAr?'أهم ٦ مؤشرات تقيس فيها أداء الاستقطاب — كل مؤشر معه طريقة حسابه ومثال سريع، بدون تعقيد.'
+    :'The 6 key metrics that measure sourcing performance — each with how to calculate it and a quick example, no complexity.';
+  var howL=isAr?'كيف تحسبه؟':'How to calculate it?';
+  var exL=isAr?'مثال سريع':'Quick example';
+  var cards=isAr?[
+    {t:'معدل قبول العروض',f:'(المقبولة ÷ المقدّمة) × ١٠٠',e:'انقبل ١٦ من ٢٠ عرض = <b>٨٠٪</b>'},
+    {t:'تكلفة التوظيف',f:'مجموع التكاليف ÷ عدد التوظيفات',e:'١٠٠ ألف ÷ ٨ توظيفات = <b>١٢,٥٠٠ ريال</b>'},
+    {t:'وقت التوظيف',f:'تاريخ قبول العرض – تاريخ التقديم',e:'قدّم ١ مارس وقُبل ٢٥ مارس = <b>٢٤ يوم</b>'},
+    {t:'جودة التوظيف',f:'(الأداء + الإنتاجية + البقاء) ÷ ٣',e:'(٨ + ٩ + ٨) ÷ ٣ = <b>٨٫٣ من ١٠</b>'},
+    {t:'معدل التحويل',f:'(المتأهلين ÷ المتقدمين) × ١٠٠',e:'تأهل ٥٠ من ٢٠٠ متقدم = <b>٢٥٪</b>'},
+    {t:'مصدر التوظيف',f:'(توظيفات القناة ÷ الإجمالي) × ١٠٠',e:'٦ من ١٠ من الترشيحات = <b>٦٠٪</b>'}
+  ]:[
+    {t:'Offer Acceptance Rate',f:'(Accepted ÷ Offered) × 100',e:'16 of 20 offers accepted = <b>80%</b>'},
+    {t:'Cost per Hire',f:'Total cost ÷ Number of hires',e:'100K ÷ 8 hires = <b>SAR 12,500</b>'},
+    {t:'Time to Hire',f:'Offer-accepted date – Apply date',e:'Applied Mar 1, accepted Mar 25 = <b>24 days</b>'},
+    {t:'Quality of Hire',f:'(Performance + Productivity + Retention) ÷ 3',e:'(8 + 9 + 8) ÷ 3 = <b>8.3 / 10</b>'},
+    {t:'Conversion Rate',f:'(Qualified ÷ Applicants) × 100',e:'50 of 200 applicants qualified = <b>25%</b>'},
+    {t:'Source of Hire',f:'(Channel hires ÷ Total) × 100',e:'6 of 10 from referrals = <b>60%</b>'}
+  ];
+  var cardsHtml=cards.map(function(c){
+    return '<div class="tak-card">'
+      +'<div class="tak-ct">'+c.t+'</div>'
+      +'<div class="tak-lbl">'+howL+'</div>'
+      +'<div class="tak-box">'+c.f+'</div>'
+      +'<div class="tak-lbl">'+exL+'</div>'
+      +'<div class="tak-box tak-ex">'+c.e+'</div>'
+      +'</div>';
+  }).join('');
+  return '<div class="tak-panel">'
+    +'<div class="tak-head"><div class="tak-title">'+title+'</div></div>'
+    +'<div class="tak-sub">'+sub+'</div>'
+    +'<div class="tak-grid">'+cardsHtml+'</div>'
+    +'</div>';
+}
 function renderAdvisor(advKey){
   const adv=ADVISORS[advKey];
   const d=adv[lang];
@@ -723,6 +776,7 @@ function renderAdvisor(advKey){
       </div>
       <button class="btn" onclick="clearChat('${hid}','${advKey}')"><i class="ti ti-trash"></i></button>
     </div>
+    ${advKey==='recruiter'?renderRecruitKPIs():''}
     <div class="chat-a" id="ca_${advKey}">
       <div class="msg a"><div class="ml">AI</div>${wlcMsg}</div>
       ${msgs.map(m=>`<div class="msg ${m.role==='user'?'u':'a'}">${m.role==='assistant'?'<div class="ml">AI</div>':''}${m.content.replace(/\n/g,'<br>')}</div>`).join('')}
