@@ -709,7 +709,7 @@ function renderEmployees(){
   return '<div class="ph"><div class="ph-ic ic-b"><i class="ti ti-id-badge-2"></i></div><div>'
     +'<h2>'+(isAr?'بيانات الموظفين':'Employees')+'</h2>'
     +'<p style="color:var(--tx2);font-size:11px"><i class="ti ti-plug-connected"></i> '
-    +(isAr?'مرتبطة مباشرة بنظام رسال عبر جسر آمن — المفاتيح محفوظة في الخادم ولا تظهر هنا.':'Connected to Resal via a secure bridge. Keys are stored server-side, never exposed here.')+'</p>'
+    +(isAr?'مرتبطة بنظام Jisr عبر جسر آمن (المفاتيح في الخادم). المتاح: عرض القائمة، عرض تفاصيل موظف، وإضافة موظف. التعديل والحذف غير متاحين في واجهة Jisr.':'Connected to Jisr via a secure bridge (keys server-side). Available: list, view one, create. Update and delete are not offered by the Jisr API.')+'</p>'
     +'</div></div>'
     +'<div class="tc" style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
     +'<button class="btn pr" onclick="loadEmployees()"><i class="ti ti-refresh"></i> '+(isAr?'تحديث البيانات':'Refresh')+'</button>'
@@ -780,7 +780,7 @@ function renderEmpTable(list){
       +'<td>'+(job||'-')+'</td>'
       +'<td>'+(dep||'-')+'</td>'
       +'<td style="font-size:11px;color:var(--tx2)">'+(email||'-')+'</td>'
-      +'<td style="white-space:nowrap">'+'<button onclick="empOpenModal('+i+')" title="'+(isAr?'تعديل':'Edit')+'" style="background:var(--bg3);border:1px solid var(--brd);color:var(--ac);border-radius:6px;padding:4px 8px;cursor:pointer;margin-inline-end:4px"><i class="ti ti-edit"></i></button>'+'<button onclick="empDelete('+i+')" title="'+(isAr?'حذف':'Delete')+'" style="background:var(--bg3);border:1px solid var(--brd);color:var(--rd);border-radius:6px;padding:4px 8px;cursor:pointer"><i class="ti ti-trash"></i></button>'+'</td>'
+      +'<td style="white-space:nowrap">'+'<button onclick="empViewOne('+i+')" title="'+(isAr?'عرض التفاصيل':'View details')+'" style="background:var(--bg3);border:1px solid var(--brd);color:var(--ac);border-radius:6px;padding:4px 10px;cursor:pointer"><i class="ti ti-eye"></i></button>'+'</td>'
       +'</tr>';
   }).join('');
   body.innerHTML='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr>'
@@ -918,6 +918,35 @@ async function empDelete(i){
   }catch(e){alert((isAr?'خطأ شبكة: ':'Network error: ')+e.message);}
 }
 
+
+async function empViewOne(i){
+  var isAr=lang==='ar';
+  var emp=(window._resalView||[])[i]||{};
+  var id=pick(emp,_IDKEYS);
+  var host=document.getElementById('emp-modal-host');
+  if(!host)return;
+  host.innerHTML='<div id="emp-ov" style="position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)empCloseModal()">'
+    +'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:12px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:20px" dir="'+(isAr?'rtl':'ltr')+'">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+    +'<h3 style="margin:0;font-size:16px"><i class="ti ti-id-badge-2"></i> '+(isAr?'تفاصيل الموظف':'Employee details')+'</h3>'
+    +'<button class="btn" onclick="empCloseModal()" style="padding:4px 10px"><i class="ti ti-x"></i></button></div>'
+    +'<div id="emp-view-body" style="color:var(--tx2);text-align:center;padding:18px"><i class="ti ti-loader"></i><br>'+(isAr?'جارٍ الجلب من Jisr...':'Fetching from Jisr...')+'</div>'
+    +'</div></div>';
+  var vb=document.getElementById('emp-view-body');
+  if(!id){if(vb)vb.innerHTML='<div style="color:var(--rd)">'+(isAr?'لا يوجد معرّف لهذا السجل.':'No id on this record.')+'</div>';return;}
+  try{
+    var r=await fetch(API+'/resal/employee/'+encodeURIComponent(id),{headers:{'Content-Type':'application/json'}});
+    var txt=await r.text();
+    var d;try{d=JSON.parse(txt);}catch(e){d=null;}
+    if(!r.ok){if(vb)vb.innerHTML='<div style="color:var(--rd)">'+(isAr?'فشل ('+r.status+'): ':'Failed ('+r.status+'): ')+escHtml(txt).slice(0,400)+'</div>';return;}
+    var obj=(d&&(d.data||d.employee||d.result))||d||{};
+    var pretty;try{pretty=JSON.stringify(obj,null,2);}catch(e){pretty=txt;}
+    if(vb)vb.innerHTML='<div style="text-align:'+(isAr?'right':'left')+'">'
+      +'<div style="font-size:11px;color:var(--tx3);margin-bottom:6px">'+(isAr?'البيانات الكاملة (Jisr):':'Full record (Jisr):')+'</div>'
+      +'<textarea readonly class="fi" style="width:100%;min-height:240px;font-family:monospace;font-size:12px;direction:ltr;text-align:left">'+escHtml(pretty)+'</textarea>'
+      +'</div>';
+  }catch(e){if(vb)vb.innerHTML='<div style="color:var(--rd)">'+(isAr?'خطأ شبكة: ':'Network error: ')+escHtml(e.message)+'</div>';}
+}
 
 function renderPage(){
   const ct=document.getElementById('ct');
