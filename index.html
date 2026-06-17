@@ -611,7 +611,7 @@ Always use these exact legal figures when answering.`,
 
 const NAV_STRUCT=[
   {gk:'ov',items:[{k:'dashboard',ic:'ti-layout-dashboard'}]},
-  {gk:'hr',items:[{k:'jd',ic:'ti-file-description'},{k:'comp_adv',ic:'ti-coin'},{k:'recruit_adv',ic:'ti-users'},{k:'payroll_adv',ic:'ti-receipt'},{k:'admin',ic:'ti-clipboard-list'},{k:'policy',ic:'ti-book'},{k:'budget',ic:'ti-calculator'},{k:'compliance_adv',ic:'ti-shield-check'}]},
+  {gk:'hr',items:[{k:'jd',ic:'ti-file-description'},{k:'employees',ic:'ti-id-badge-2'},{k:'comp_adv',ic:'ti-coin'},{k:'recruit_adv',ic:'ti-users'},{k:'payroll_adv',ic:'ti-receipt'},{k:'admin',ic:'ti-clipboard-list'},{k:'policy',ic:'ti-book'},{k:'budget',ic:'ti-calculator'},{k:'compliance_adv',ic:'ti-shield-check'}]},
   {gk:'tp',items:[{k:'talent',ic:'ti-award'},{k:'perf',ic:'ti-chart-line'},{k:'lnd',ic:'ti-school'},{k:'career',ic:'ti-road'},{k:'wellbeing_adv',ic:'ti-heart-rate-monitor'}]},
   {gk:'org',items:[{k:'od',ic:'ti-hierarchy'},{k:'orgm',ic:'ti-sitemap'},{k:'change_adv',ic:'ti-refresh'},{k:'people_adv',ic:'ti-chart-dots'},{k:'dei_adv',ic:'ti-users-group'},{k:'lead',ic:'ti-crown'},{k:'culture_adv',ic:'ti-heart'}]},
   {gk:'str',items:[{k:'strategy',ic:'ti-target'},{k:'wfp',ic:'ti-graph'},{k:'score',ic:'ti-layout-grid'},{k:'sci',ic:'ti-flask'},{k:'reporting_adv',ic:'ti-report-analytics'}]},
@@ -621,7 +621,7 @@ const NAV_STRUCT=[
 
 const NAV_LABELS={
   ar:{ov:'نظرة عامة',hr:'الموارد البشرية الأساسية',tp:'المواهب والأداء',org:'التطوير التنظيمي',str:'الموارد البشرية الاستراتيجية',ai_sec:'مستشارو الذكاء الاصطناعي',cert:'الشهادات المهنية',
-    dashboard:'لوحة التحكم',jd:'المسميات الوظيفية',comp_adv:'التعويضات والمزايا',recruit_adv:'التوظيف والاستقطاب',payroll_adv:'الرواتب والمستحقات',admin:'الإدارة التشغيلية',policy:'مكتبة السياسات',compliance_adv:'الامتثال والأنظمة',budget:'ميزانية الموارد البشرية',
+    dashboard:'لوحة التحكم',jd:'المسميات الوظيفية',employees:'بيانات الموظفين (رسال)',comp_adv:'التعويضات والمزايا',recruit_adv:'التوظيف والاستقطاب',payroll_adv:'الرواتب والمستحقات',admin:'الإدارة التشغيلية',policy:'مكتبة السياسات',compliance_adv:'الامتثال والأنظمة',budget:'ميزانية الموارد البشرية',
     talent:'إدارة المواهب',perf:'إدارة الأداء',lnd:'التعلم والتطوير',career:'المسار المهني',wellbeing_adv:'رفاهية الموظفين',
     od:'التطوير التنظيمي',orgm:'إدارة المنظمة',change_adv:'إدارة التغيير',people_adv:'تحليلات الأفراد',dei_adv:'التنوع والإدماج',lead:'القيادة',culture_adv:'الثقافة والانخراط',
     strategy:'استراتيجية الموارد البشرية',wfp:'تخطيط القوى العاملة',score:'بطاقة الأداء المتوازن',sci:'الموارد البشرية العلمية',reporting_adv:'التقارير ولوحات البيانات',
@@ -629,7 +629,7 @@ const NAV_LABELS={
     certs:'HRCI / SHRM / ATD'
   },
   en:{ov:'Overview',hr:'Core HR',tp:'Talent & Performance',org:'Organizational',str:'Strategic HR',ai_sec:'AI Advisors',cert:'Certifications',
-    dashboard:'Dashboard',jd:'Job Descriptions',comp_adv:'Compensation & Benefits',recruit_adv:'Recruitment',payroll_adv:'Payroll',admin:'HR Admin',policy:'Policy Library',compliance_adv:'Compliance',budget:'HR Budget',
+    dashboard:'Dashboard',jd:'Job Descriptions',employees:'Employees (Resal)',comp_adv:'Compensation & Benefits',recruit_adv:'Recruitment',payroll_adv:'Payroll',admin:'HR Admin',policy:'Policy Library',compliance_adv:'Compliance',budget:'HR Budget',
     talent:'Talent Management',perf:'Performance',lnd:'Learning & Development',career:'Career Pathing',wellbeing_adv:'Employee Wellbeing',
     od:'Org Development',orgm:'Org Management',change_adv:'Change Management',people_adv:'People Analytics',dei_adv:'DEI',lead:'Leadership',culture_adv:'Culture & Engagement',
     strategy:'HR Strategy',wfp:'Workforce Planning',score:'HR Scorecard',sci:'Scientific HR',reporting_adv:'Reporting & Dashboards',
@@ -702,12 +702,106 @@ function goPage(id){
 }
 
 /* ===================== RENDER PAGE ===================== */
+/* ===================== EMPLOYEES (RESAL API via Worker) ===================== */
+function renderEmployees(){
+  var isAr=lang==='ar';
+  setTimeout(function(){ if(!window._resalEmp) loadEmployees(); },50);
+  return '<div class="ph"><div class="ph-ic ic-b"><i class="ti ti-id-badge-2"></i></div><div>'
+    +'<h2>'+(isAr?'بيانات الموظفين':'Employees')+'</h2>'
+    +'<p style="color:var(--tx2);font-size:11px"><i class="ti ti-plug-connected"></i> '
+    +(isAr?'مرتبطة مباشرة بنظام رسال عبر جسر آمن — المفاتيح محفوظة في الخادم ولا تظهر هنا.':'Connected to Resal via a secure bridge. Keys are stored server-side, never exposed here.')+'</p>'
+    +'</div></div>'
+    +'<div class="tc" style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
+    +'<button class="btn pr" onclick="loadEmployees()"><i class="ti ti-refresh"></i> '+(isAr?'تحديث البيانات':'Refresh')+'</button>'
+    +'<input class="fi" id="emp-search" oninput="filterEmployees()" placeholder="'+(isAr?'بحث بالاسم أو الرقم الوظيفي...':'Search by name or ID...')+'" style="flex:1;min-width:180px;max-width:340px">'
+    +'<span id="emp-count" style="color:var(--tx2);font-size:12px;margin-inline-start:auto"></span>'
+    +'</div>'
+    +'<div class="tc" id="emp-wrap" style="padding:0;overflow:hidden"><div id="emp-body" style="padding:24px;text-align:center;color:var(--tx2)">'
+    +'<i class="ti ti-loader" style="font-size:22px"></i><br>'+(isAr?'جارٍ التحميل...':'Loading...')+'</div></div>';
+}
+
+async function loadEmployees(){
+  var isAr=lang==='ar';
+  var body=document.getElementById('emp-body');
+  if(!body)return;
+  body.innerHTML='<div style="padding:24px;text-align:center;color:var(--tx2)"><i class="ti ti-loader"></i><br>'+(isAr?'جارٍ جلب الموظفين من رسال...':'Fetching employees from Resal...')+'</div>';
+  try{
+    var r=await fetch(API+'/resal/employees',{method:'GET',headers:{'Content-Type':'application/json'}});
+    var txt=await r.text();
+    var d;try{d=JSON.parse(txt);}catch(e){d=null;}
+    if(!r.ok){
+      body.innerHTML=empError(isAr,r.status,txt);
+      return;
+    }
+    /* Normalize: accept {data:[...]}, {employees:[...]}, {result:[...]} or a bare array */
+    var list=Array.isArray(d)?d:(d&&(d.data||d.employees||d.result||d.items||d.records))||[];
+    if(!Array.isArray(list))list=[];
+    window._resalEmp=list;
+    renderEmpTable(list);
+  }catch(e){
+    body.innerHTML=empError(isAr,'NET',e.message);
+  }
+}
+
+function empError(isAr,code,detail){
+  return '<div style="padding:20px;text-align:'+(isAr?'right':'left')+'">'
+    +'<div style="background:rgba(240,78,78,.1);border:1px solid var(--rd);border-radius:8px;padding:14px;color:var(--tx)">'
+    +'<strong style="color:var(--rd)"><i class="ti ti-alert-triangle"></i> '+(isAr?'تعذّر جلب البيانات':'Could not fetch data')+'</strong>'
+    +'<div style="font-size:12px;margin-top:8px;color:var(--tx2)">'+(isAr?'رمز الحالة: ':'Status: ')+code+'</div>'
+    +'<div style="font-size:11px;margin-top:6px;color:var(--tx3);word-break:break-all;max-height:120px;overflow:auto">'+(detail||'').replace(/</g,'&lt;').slice(0,500)+'</div>'
+    +'<div style="font-size:11px;margin-top:10px;color:var(--am)">'+(isAr?'تأكد أن جسر الخادم (Worker) فعّال وأن أسرار رسال مضبوطة في إعداداته.':'Ensure the Worker bridge is deployed and Resal secrets are set in its settings.')+'</div>'
+    +'</div></div>';
+}
+
+function pick(o,keys){for(var i=0;i<keys.length;i++){if(o[keys[i]]!=null&&o[keys[i]]!=='')return o[keys[i]];}return '';}
+
+function renderEmpTable(list){
+  var isAr=lang==='ar';
+  var body=document.getElementById('emp-body');
+  var cnt=document.getElementById('emp-count');
+  if(cnt)cnt.textContent=(isAr?'الإجمالي: ':'Total: ')+list.length;
+  if(!list.length){
+    body.innerHTML='<div style="padding:24px;text-align:center;color:var(--tx2)">'+(isAr?'لا توجد بيانات موظفين.':'No employee data.')+'</div>';
+    return;
+  }
+  var rows=list.map(function(e,i){
+    var name=pick(e,['name','full_name','fullName','employee_name','arabic_name','name_ar','englishName','english_name']);
+    var id=pick(e,['id','employee_id','employeeId','number','employee_number','emp_no','code']);
+    var job=pick(e,['job_title','jobTitle','title','position','designation']);
+    var dep=pick(e,['department','dept','department_name','departmentName']);
+    var email=pick(e,['email','work_email','company_email']);
+    return '<tr>'
+      +'<td style="color:var(--tx3)">'+(i+1)+'</td>'
+      +'<td><strong>'+(name||'-')+'</strong></td>'
+      +'<td>'+(id||'-')+'</td>'
+      +'<td>'+(job||'-')+'</td>'
+      +'<td>'+(dep||'-')+'</td>'
+      +'<td style="font-size:11px;color:var(--tx2)">'+(email||'-')+'</td>'
+      +'</tr>';
+  }).join('');
+  body.innerHTML='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr>'
+    +'<th>#</th><th>'+(isAr?'الاسم':'Name')+'</th><th>'+(isAr?'الرقم الوظيفي':'ID')+'</th>'
+    +'<th>'+(isAr?'المسمى':'Title')+'</th><th>'+(isAr?'الإدارة':'Dept')+'</th><th>'+(isAr?'البريد':'Email')+'</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+function filterEmployees(){
+  var q=(document.getElementById('emp-search')||{}).value||'';
+  q=q.trim().toLowerCase();
+  var list=window._resalEmp||[];
+  if(!q){renderEmpTable(list);return;}
+  var f=list.filter(function(e){
+    return JSON.stringify(e).toLowerCase().indexOf(q)>-1;
+  });
+  renderEmpTable(f);
+}
+
 function renderPage(){
   const ct=document.getElementById('ct');
   // Route to advisor if applicable
   if(PAGE_TO_ADVISOR[page]){renderAdvisor(PAGE_TO_ADVISOR[page]);return;}
   const routes={
-    dashboard:renderDash,ai_hub:renderAIHub,jd:renderJD,
+    dashboard:renderDash,ai_hub:renderAIHub,jd:renderJD,employees:renderEmployees,
     talent:renderTalent,od:renderOD,score:renderScore,certs:renderCerts,
     policy:renderPolicy,admin:renderAdmin,perf:renderPerf,budget:renderBudget,
     lnd:renderLnD,career:renderCareer,orgm:renderOrgM,
