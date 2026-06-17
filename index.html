@@ -713,11 +713,13 @@ function renderEmployees(){
     +'</div></div>'
     +'<div class="tc" style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
     +'<button class="btn pr" onclick="loadEmployees()"><i class="ti ti-refresh"></i> '+(isAr?'تحديث البيانات':'Refresh')+'</button>'
+    +'<button class="btn" onclick="empOpenModal(null)"><i class="ti ti-user-plus"></i> '+(isAr?'إضافة موظف':'Add employee')+'</button>'
     +'<input class="fi" id="emp-search" oninput="filterEmployees()" placeholder="'+(isAr?'بحث بالاسم أو الرقم الوظيفي...':'Search by name or ID...')+'" style="flex:1;min-width:180px;max-width:340px">'
     +'<span id="emp-count" style="color:var(--tx2);font-size:12px;margin-inline-start:auto"></span>'
     +'</div>'
     +'<div class="tc" id="emp-wrap" style="padding:0;overflow:hidden"><div id="emp-body" style="padding:24px;text-align:center;color:var(--tx2)">'
-    +'<i class="ti ti-loader" style="font-size:22px"></i><br>'+(isAr?'جارٍ التحميل...':'Loading...')+'</div></div>';
+    +'<i class="ti ti-loader" style="font-size:22px"></i><br>'+(isAr?'جارٍ التحميل...':'Loading...')+'</div></div>'
+    +'<div id="emp-modal-host"></div>';
 }
 
 async function loadEmployees(){
@@ -757,6 +759,7 @@ function pick(o,keys){for(var i=0;i<keys.length;i++){if(o[keys[i]]!=null&&o[keys
 
 function renderEmpTable(list){
   var isAr=lang==='ar';
+  window._resalView=list;
   var body=document.getElementById('emp-body');
   var cnt=document.getElementById('emp-count');
   if(cnt)cnt.textContent=(isAr?'الإجمالي: ':'Total: ')+list.length;
@@ -777,11 +780,12 @@ function renderEmpTable(list){
       +'<td>'+(job||'-')+'</td>'
       +'<td>'+(dep||'-')+'</td>'
       +'<td style="font-size:11px;color:var(--tx2)">'+(email||'-')+'</td>'
+      +'<td style="white-space:nowrap">'+'<button onclick="empOpenModal('+i+')" title="'+(isAr?'تعديل':'Edit')+'" style="background:var(--bg3);border:1px solid var(--brd);color:var(--ac);border-radius:6px;padding:4px 8px;cursor:pointer;margin-inline-end:4px"><i class="ti ti-edit"></i></button>'+'<button onclick="empDelete('+i+')" title="'+(isAr?'حذف':'Delete')+'" style="background:var(--bg3);border:1px solid var(--brd);color:var(--rd);border-radius:6px;padding:4px 8px;cursor:pointer"><i class="ti ti-trash"></i></button>'+'</td>'
       +'</tr>';
   }).join('');
   body.innerHTML='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr>'
     +'<th>#</th><th>'+(isAr?'الاسم':'Name')+'</th><th>'+(isAr?'الرقم الوظيفي':'ID')+'</th>'
-    +'<th>'+(isAr?'المسمى':'Title')+'</th><th>'+(isAr?'الإدارة':'Dept')+'</th><th>'+(isAr?'البريد':'Email')+'</th>'
+    +'<th>'+(isAr?'المسمى':'Title')+'</th><th>'+(isAr?'الإدارة':'Dept')+'</th><th>'+(isAr?'البريد':'Email')+'</th><th>'+(isAr?'إجراءات':'Actions')+'</th>'
     +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 
@@ -795,6 +799,125 @@ function filterEmployees(){
   });
   renderEmpTable(f);
 }
+
+/* ===================== EMPLOYEES CRUD (full data control via Worker) ===================== */
+var _EMPFIELDS=[
+ {id:'name',keys:['name','full_name','fullName','name_ar','arabic_name','employee_name'],ar:'الاسم',en:'Name'},
+ {id:'employee_id',keys:['employee_id','id','number','employee_number','emp_no','code'],ar:'الرقم الوظيفي',en:'Employee ID'},
+ {id:'job_title',keys:['job_title','jobTitle','title','position','designation'],ar:'المسمى الوظيفي',en:'Job title'},
+ {id:'department',keys:['department','dept','department_name','departmentName'],ar:'الإدارة',en:'Department'},
+ {id:'email',keys:['email','work_email','company_email'],ar:'البريد الإلكتروني',en:'Email'},
+ {id:'phone',keys:['phone','mobile','phone_number','mobile_number'],ar:'الجوال',en:'Phone'},
+ {id:'national_id',keys:['national_id','iqama','iqama_number','nationalId','national_id_number'],ar:'الهوية / الإقامة',en:'National ID'}
+];
+var _IDKEYS=['id','employee_id','employeeId','number','employee_number','emp_no','code'];
+
+function escAttr(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+function escHtml(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function empOpenModal(i){
+  var isAr=lang==='ar';
+  var isEdit=(i!==null&&i!==undefined);
+  var emp=isEdit?((window._resalView||[])[i]||{}):null;
+  var title=isEdit?(isAr?'تعديل موظف':'Edit employee'):(isAr?'إضافة موظف':'Add employee');
+  var fields='';
+  for(var k=0;k<_EMPFIELDS.length;k++){
+    var f=_EMPFIELDS[k];
+    var val=isEdit?pick(emp,f.keys):'';
+    fields+='<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--tx2);margin-bottom:4px">'+(isAr?f.ar:f.en)+'</label>'
+      +'<input class="fi" id="ef_'+f.id+'" value="'+escAttr(val)+'" style="width:100%"></div>';
+  }
+  var rawVal=isEdit?JSON.stringify(emp,null,2):'';
+  var rawChecked=isEdit?'checked':'';
+  var formDisp=isEdit?'none':'block';
+  var rawDisp=isEdit?'block':'none';
+  var html='<div id="emp-ov" style="position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)empCloseModal()">'
+    +'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:12px;max-width:540px;width:100%;max-height:90vh;overflow:auto;padding:20px" dir="'+(isAr?'rtl':'ltr')+'">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+    +'<h3 style="margin:0;font-size:16px"><i class="ti ti-id-badge-2"></i> '+title+'</h3>'
+    +'<button class="btn" onclick="empCloseModal()" style="padding:4px 10px"><i class="ti ti-x"></i></button></div>'
+    +'<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx2);margin-bottom:12px;cursor:pointer">'
+    +'<input type="checkbox" id="emp-raw-on" '+rawChecked+' onchange="empToggleRaw()"> '
+    +(isAr?'وضع JSON المتقدم (تحكم دقيق في كل الحقول)':'Advanced JSON mode (precise control of all fields)')+'</label>'
+    +'<div id="emp-form-sec" style="display:'+formDisp+'">'+fields+'</div>'
+    +'<div id="emp-raw-sec" style="display:'+rawDisp+'">'
+    +'<label style="display:block;font-size:11px;color:var(--tx2);margin-bottom:4px">'+(isAr?'الحمولة (JSON) المرسلة لرسال:':'Payload (JSON) sent to Resal:')+'</label>'
+    +'<textarea id="emp-raw" class="fi" style="width:100%;min-height:180px;font-family:monospace;font-size:12px;direction:ltr;text-align:left">'+escHtml(rawVal)+'</textarea></div>'
+    +'<div id="emp-modal-status" style="font-size:12px;margin-top:10px;min-height:16px"></div>'
+    +'<div style="display:flex;gap:8px;margin-top:14px">'
+    +'<button class="btn pr" id="emp-save-btn" onclick="empSubmit('+(isEdit?'true,'+i:'false,null')+')"><i class="ti ti-device-floppy"></i> '+(isAr?'حفظ':'Save')+'</button>'
+    +'<button class="btn" onclick="empCloseModal()">'+(isAr?'إلغاء':'Cancel')+'</button></div>'
+    +'</div></div>';
+  var host=document.getElementById('emp-modal-host');
+  if(host)host.innerHTML=html;
+}
+
+function empToggleRaw(){
+  var on=(document.getElementById('emp-raw-on')||{}).checked;
+  var fs=document.getElementById('emp-form-sec');
+  var rs=document.getElementById('emp-raw-sec');
+  if(fs)fs.style.display=on?'none':'block';
+  if(rs)rs.style.display=on?'block':'none';
+}
+
+function empCloseModal(){var h=document.getElementById('emp-modal-host');if(h)h.innerHTML='';}
+
+function empBuildPayload(isEdit,emp){
+  var on=(document.getElementById('emp-raw-on')||{}).checked;
+  if(on){
+    var t=(document.getElementById('emp-raw')||{}).value||'';
+    return JSON.parse(t); /* throws on bad JSON, caught by caller */
+  }
+  var obj=isEdit?Object.assign({},emp):{};
+  for(var k=0;k<_EMPFIELDS.length;k++){
+    var f=_EMPFIELDS[k];
+    var el=document.getElementById('ef_'+f.id);
+    if(el&&el.value!=='')obj[f.id]=el.value;
+  }
+  return obj;
+}
+
+async function empSubmit(isEdit,i){
+  var isAr=lang==='ar';
+  var st=document.getElementById('emp-modal-status');
+  var btn=document.getElementById('emp-save-btn');
+  var emp=isEdit?((window._resalView||[])[i]||{}):null;
+  var payload;
+  try{payload=empBuildPayload(isEdit,emp);}
+  catch(e){if(st){st.style.color='var(--rd)';st.textContent=(isAr?'JSON غير صالح: ':'Invalid JSON: ')+e.message;}return;}
+  var url,method;
+  if(isEdit){
+    var id=pick(emp,_IDKEYS);
+    if(!id){if(st){st.style.color='var(--rd)';st.textContent=isAr?'لا يوجد معرّف (id) لهذا الموظف، تعذّر التعديل.':'No id on this record, cannot update.';}return;}
+    url=API+'/resal/employee/'+encodeURIComponent(id);method='PUT';
+  }else{url=API+'/resal/employees';method='POST';}
+  if(btn){btn.disabled=true;}
+  if(st){st.style.color='var(--tx2)';st.textContent=isAr?'جارٍ الحفظ...':'Saving...';}
+  try{
+    var r=await fetch(url,{method:method,headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    var txt=await r.text();
+    if(r.ok){empCloseModal();loadEmployees();return;}
+    if(st){st.style.color='var(--rd)';st.textContent=(isAr?'فشل ('+r.status+'): ':'Failed ('+r.status+'): ')+txt.slice(0,300);}
+  }catch(e){if(st){st.style.color='var(--rd)';st.textContent=(isAr?'خطأ شبكة: ':'Network error: ')+e.message;}}
+  if(btn){btn.disabled=false;}
+}
+
+async function empDelete(i){
+  var isAr=lang==='ar';
+  var emp=(window._resalView||[])[i]||{};
+  var name=pick(emp,['name','full_name','fullName','name_ar','arabic_name','employee_name'])||'-';
+  var id=pick(emp,_IDKEYS);
+  if(!id){alert(isAr?'لا يوجد معرّف (id) لهذا السجل، تعذّر الحذف.':'No id on this record, cannot delete.');return;}
+  var ok=confirm(isAr?('تأكيد حذف الموظف: '+name+'\nهذا إجراء لا يمكن التراجع عنه.'):('Confirm delete employee: '+name+'\nThis cannot be undone.'));
+  if(!ok)return;
+  try{
+    var r=await fetch(API+'/resal/employee/'+encodeURIComponent(id),{method:'DELETE',headers:{'Content-Type':'application/json'}});
+    var txt=await r.text();
+    if(r.ok){loadEmployees();return;}
+    alert((isAr?'فشل الحذف ('+r.status+'): ':'Delete failed ('+r.status+'): ')+txt.slice(0,300));
+  }catch(e){alert((isAr?'خطأ شبكة: ':'Network error: ')+e.message);}
+}
+
 
 function renderPage(){
   const ct=document.getElementById('ct');
