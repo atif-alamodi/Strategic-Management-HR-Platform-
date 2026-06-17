@@ -1,6 +1,6 @@
 /* Service Worker for the HR Strategic Management Platform (PWA) */
 /* v4: network-first for app shell + JS/HTML, instant skip-waiting */
-const CACHE = 'hrsp-v9';
+const CACHE = 'hrsp-v10';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-an-192.png', './icon-an-512.png'];
 
 self.addEventListener('install', e => {
