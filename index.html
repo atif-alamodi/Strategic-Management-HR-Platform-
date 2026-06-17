@@ -287,6 +287,7 @@ html[dir=ltr] .msg.a{align-self:flex-start;border-radius:9px 9px 9px 2px}
 
 <script>
 const API="https://hr-strategic-proxy.atif-alamodi.workers.dev";
+const RESAL_API=API; /* Jisr bridge base. If you deploy the bridge as a SEPARATE worker, set its URL here. */
 let lang='ar',page='dashboard',sbOpen=true,chatHistories={};
 
 /* JD level profiles drive specialized prompts + accurate PDF charts (index 0..7 = 8 dropdown levels) */
@@ -728,7 +729,7 @@ async function loadEmployees(){
   if(!body)return;
   body.innerHTML='<div style="padding:24px;text-align:center;color:var(--tx2)"><i class="ti ti-loader"></i><br>'+(isAr?'جارٍ جلب الموظفين من رسال...':'Fetching employees from Resal...')+'</div>';
   try{
-    var r=await fetch(API+'/resal/employees',{method:'GET',headers:{'Content-Type':'application/json'}});
+    var r=await fetch(RESAL_API+'/resal/employees',{method:'GET',headers:{'Content-Type':'application/json'}});
     var txt=await r.text();
     var d;try{d=JSON.parse(txt);}catch(e){d=null;}
     if(!r.ok){
@@ -889,8 +890,8 @@ async function empSubmit(isEdit,i){
   if(isEdit){
     var id=pick(emp,_IDKEYS);
     if(!id){if(st){st.style.color='var(--rd)';st.textContent=isAr?'لا يوجد معرّف (id) لهذا الموظف، تعذّر التعديل.':'No id on this record, cannot update.';}return;}
-    url=API+'/resal/employee/'+encodeURIComponent(id);method='PUT';
-  }else{url=API+'/resal/employees';method='POST';}
+    url=RESAL_API+'/resal/employee/'+encodeURIComponent(id);method='PUT';
+  }else{url=RESAL_API+'/resal/employees';method='POST';}
   if(btn){btn.disabled=true;}
   if(st){st.style.color='var(--tx2)';st.textContent=isAr?'جارٍ الحفظ...':'Saving...';}
   try{
@@ -911,7 +912,7 @@ async function empDelete(i){
   var ok=confirm(isAr?('تأكيد حذف الموظف: '+name+'\nهذا إجراء لا يمكن التراجع عنه.'):('Confirm delete employee: '+name+'\nThis cannot be undone.'));
   if(!ok)return;
   try{
-    var r=await fetch(API+'/resal/employee/'+encodeURIComponent(id),{method:'DELETE',headers:{'Content-Type':'application/json'}});
+    var r=await fetch(RESAL_API+'/resal/employee/'+encodeURIComponent(id),{method:'DELETE',headers:{'Content-Type':'application/json'}});
     var txt=await r.text();
     if(r.ok){loadEmployees();return;}
     alert((isAr?'فشل الحذف ('+r.status+'): ':'Delete failed ('+r.status+'): ')+txt.slice(0,300));
@@ -935,7 +936,7 @@ async function empViewOne(i){
   var vb=document.getElementById('emp-view-body');
   if(!id){if(vb)vb.innerHTML='<div style="color:var(--rd)">'+(isAr?'لا يوجد معرّف لهذا السجل.':'No id on this record.')+'</div>';return;}
   try{
-    var r=await fetch(API+'/resal/employee/'+encodeURIComponent(id),{headers:{'Content-Type':'application/json'}});
+    var r=await fetch(RESAL_API+'/resal/employee/'+encodeURIComponent(id),{headers:{'Content-Type':'application/json'}});
     var txt=await r.text();
     var d;try{d=JSON.parse(txt);}catch(e){d=null;}
     if(!r.ok){if(vb)vb.innerHTML='<div style="color:var(--rd)">'+(isAr?'فشل ('+r.status+'): ':'Failed ('+r.status+'): ')+escHtml(txt).slice(0,400)+'</div>';return;}
